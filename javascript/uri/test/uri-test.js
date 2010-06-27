@@ -1,5 +1,7 @@
 $(document).ready(function()
 {
+  // <capture>
+  
   var uri = new URI('http://poppa.se');
   uri.path = '/blog/';
   uri.variables.offset = 10;
@@ -15,9 +17,10 @@ $(document).ready(function()
   // Print example 2
   puts("<b>Example 2:</b> {0}\n", uri.toString());
 
-  var uri = new URI();
-  uri.parse('http://poppa.se');
+  uri.parse('http://google.com');
 
   // Print example 3
   puts("<b>Example 3:</b> {0}", uri.toString());
+
+  // </capture>
 });

@@ -21,7 +21,7 @@ int main(int argc, array(string) argv)
     return 1;
   }
 
-  string path = dirname(combine_path(dirname(__FILE__), file));
+  string path = getcwd();
 
   highlighter = Syntaxer.get_parser("js");
   highlighter->line_wrap = ({ "", "<br/>\n" });
@@ -77,8 +77,17 @@ int main(int argc, array(string) argv)
     }
   );
 
-  parser->feed(Stdio.read_file(file), 1)->finish()->read();
-  Stdio.write_file(file, buf->get());
+  mixed e = catch {
+    parser->feed(Stdio.read_file(file), 1)->finish()->read();
+    Stdio.write_file(file, buf->get());
+  };
+  
+  if (e) {
+    werror("An error occured: %s\n", describe_error(e));
+    return 1;
+  }
+
+  write("Wrote %s\n", file);
 
   return 0;
 }

@@ -36,9 +36,25 @@
     <div id="target1">
       <h2>Example 1</h2>
       <div id="svg1"></div>
-      <div class="code"><p><strong>JavaScript:</strong></p><code><span style='color:#006'><b>var</b></span>&#160;d&#160;<span style='color:#00C'>=</span>&#160;SVG<span style='color:#00C'>.</span>createDocument<span style='color:#00C'>(</span><span style='color:purple'>600</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>300</span><span style='color:#00C'>,</span>&#160;<span style='color:#070'>&#39;test1&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+      <div class="code"><p><strong>JavaScript:</strong></p><code><span style='color:#818A9E'>//!&#160;Creates&#160;a&#160;new&#160;SVG&#160;element&#160;of&#160;width&#160;600&#160;and&#160;height&#160;300&#160;with&#160;id&#160;&#34;test1&#34;</span>&#160;<br/>
+<span style='color:#006'><b>var</b></span>&#160;d&#160;<span style='color:#00C'>=</span>&#160;SVG<span style='color:#00C'>.</span>createDocument<span style='color:#00C'>(</span><span style='color:purple'>600</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>300</span><span style='color:#00C'>,</span>&#160;<span style='color:#070'>&#39;test1&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+<span style='color:#818A9E'>//!&#160;The&#160;XLink&#160;namespace&#160;can&#160;also&#160;be&#160;added&#160;by&#160;calling:</span>&#160;<br/>
+<span style='color:#818A9E'>//!&#160;d.useXLink();</span>&#160;<br/>
+<span style='color:#818A9E'>//!&#160;This&#160;is&#160;just&#160;for&#160;the&#160;purpose&#160;of&#160;showing&#160;how&#160;to&#160;add&#160;an&#160;arbitrary</span>&#160;<br/>
+<span style='color:#818A9E'>//!&#160;namespace.</span>&#160;<br/>
 d<span style='color:#00C'>.</span>addNamespace<span style='color:#00C'>(</span><span style='color:#070'>&#39;http://www.w3.org/1999/xlink&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#070'>&#39;xmlns:xlink&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+<span style='color:#818A9E'>//!&#160;Create&#160;a&#160;defs&#160;node</span>&#160;<br/>
 <span style='color:#006'><b>var</b></span>&#160;defs&#160;<span style='color:#00C'>=</span>&#160;d<span style='color:#00C'>.</span>defs<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+<span style='color:#818A9E'>//!&#160;Lets&#160;create&#160;a&#160;linear&#160;gradient&#160;fill.</span>&#160;<br/>
+<span style='color:#818A9E'>//!&#160;Note&#160;the&#160;hash&#160;in&#160;the&#160;&#34;spreadMethod&#34;&#160;attribute.&#160;The&#160;hash&#160;prevents&#160;the</span>&#160;<br/>
+<span style='color:#818A9E'>//!&#160;attribute&#160;from&#160;being&#160;&#34;unCamelCased&#34;.&#160;By&#160;default&#160;all&#160;camelCased&#160;attributes</span>&#160;<br/>
+<span style='color:#818A9E'>//!&#160;is&#160;converted&#160;to&#160;&#34;camel-case&#34;.&#160;Sometimes&#160;the&#160;camleCase&#160;is&#160;neccessary&#160;</span>&#160;<br/>
+<span style='color:#818A9E'>//!&#160;though!</span>&#160;<br/>
+<span style='color:#818A9E'>//!</span>&#160;<br/>
+<span style='color:#818A9E'>//!&#160;Note&#160;the&#160;node()&#160;method&#160;which&#160;is&#160;used&#160;to&#160;add&#160;an&#160;arbitrary&#160;node.</span>&#160;<br/>
 <span style='color:#006'><b>var</b></span>&#160;gradient&#160;<span style='color:#00C'>=</span>&#160;defs<span style='color:#00C'>.</span><span style='color:#55C'>node</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;linearGradient&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
 &#160;&#160;<span style='color:#958'>id</span><span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;gradient1&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;x1<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;0%&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
@@ -47,27 +63,43 @@ d<span style='color:#00C'>.</span>addNamespace<span style='color:#00C'>(</span><
 &#160;&#160;y2<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;50%&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;<span style='color:#070'>&#39;#spreadMethod&#39;</span><span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;pad&#39;</span>&#160;&#160;<br/>
 <span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
-&#160;&#160;<br/>
 gradient<span style='color:#00C'>.</span><span style='color:#55C'>node</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;stop&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;offset<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;0%&#39;</span><span style='color:#00C'>,</span>&#160;stopColor<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;#4A678A&#39;</span><span style='color:#00C'>,</span>&#160;stopOpacity<span style='color:#00C'>:</span>&#160;<span style='color:purple'>1</span>&#160;<span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 gradient<span style='color:#00C'>.</span><span style='color:#55C'>node</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;stop&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;offset<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;100%&#39;</span><span style='color:#00C'>,</span>&#160;stopColor<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;#193353&#39;</span><span style='color:#00C'>,</span>&#160;stopOpacity<span style='color:#00C'>:</span>&#160;<span style='color:purple'>1</span>&#160;<span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 &#160;&#160;<br/>
-<span style='color:#006'><b>var</b></span>&#160;group&#160;<span style='color:#00C'>=</span>&#160;d<span style='color:#00C'>.</span>g<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
-&#160;&#160;<br/>
-group<span style='color:#00C'>.</span>rect<span style='color:#00C'>(</span><span style='color:purple'>0</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>0</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>599</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>299</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
+<span style='color:#818A9E'>//!&#160;Create&#160;a&#160;rectangle&#160;that&#160;fills&#160;the&#160;entire&#160;document.&#160;Serves&#160;a&#160;background</span>&#160;<br/>
+d<span style='color:#00C'>.</span>rect<span style='color:#00C'>(</span><span style='color:purple'>0</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>0</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>600</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>300</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
 &#160;&#160;stroke<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;#000&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
-&#160;&#160;strokeWidth<span style='color:#00C'>:</span>&#160;<span style='color:purple'>3</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
+&#160;&#160;strokeWidth<span style='color:#00C'>:</span>&#160;<span style='color:purple'>4</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;fill<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;url(#gradient1)&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;shapeRendering<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;crispEdges&#39;</span>&#160;&#160;<br/>
 <span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 &#160;&#160;<br/>
-<span style='color:#006'><b>var</b></span>&#160;<span style='color:#958'>text</span>&#160;<span style='color:#00C'>=</span>&#160;group<span style='color:#00C'>.</span><span style='color:#958'>text</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;This&#160;is&#160;an&#160;SVG&#160;test!&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>160</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>150</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
+<span style='color:#818A9E'>//!&#160;Let&#39;s&#160;create&#160;a&#160;text&#160;group.</span>&#160;<br/>
+<span style='color:#818A9E'>//!&#160;The&#160;first&#160;argument&#160;is&#160;the&#160;actual&#160;text&#160;but&#160;in&#160;this&#160;case&#160;the&#160;text&#160;node</span>&#160;<br/>
+<span style='color:#818A9E'>//!&#160;will&#160;be&#160;appended&#160;with&#160;&#34;tspan&#34;&#160;nodes&#160;which&#160;will&#160;contain&#160;the&#160;actual&#160;text.</span>&#160;<br/>
+<span style='color:#006'><b>var</b></span>&#160;tgroup&#160;<span style='color:#00C'>=</span>&#160;d<span style='color:#00C'>.</span><span style='color:#958'>text</span><span style='color:#00C'>(</span><span style='color:#006'><b>null</b></span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>160</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>150</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+<span style='color:#818A9E'>//!&#160;Append&#160;the&#160;first&#160;text&#160;to&#160;the&#160;text&#160;group</span>&#160;<br/>
+<span style='color:#006'><b>var</b></span>&#160;<span style='color:#958'>text</span>&#160;<span style='color:#00C'>=</span>&#160;tgroup<span style='color:#00C'>.</span>tspan<span style='color:#00C'>(</span><span style='color:#070'>&#39;This&#160;is&#160;an&#160;SVG&#160;test!&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
 &#160;&#160;<span style='color:#C0A'>fontFamily</span><span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;arial,sans-serif&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;<span style='color:#958'>fontSize</span><span style='color:#00C'>:</span>&#160;<span style='color:purple'>28</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;<span style='color:#958'>fontWeight</span><span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;bold&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;fill<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;#fff&#39;</span>&#160;&#160;<br/>
 <span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 &#160;&#160;<br/>
-group<span style='color:#00C'>.</span>a<span style='color:#00C'>(</span><span style='color:#070'>&#39;http://poppa.se&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#958'>text</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+<span style='color:#818A9E'>//!&#160;Make&#160;the&#160;text&#160;clickable</span>&#160;<br/>
+tgroup<span style='color:#00C'>.</span>a<span style='color:#00C'>(</span><span style='color:#070'>&#39;http://poppa.se&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#958'>text</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+<span style='color:#818A9E'>//!&#160;Append&#160;a&#160;second&#160;text&#160;to&#160;the&#160;text&#160;group</span>&#160;<br/>
+tgroup<span style='color:#00C'>.</span>tspan<span style='color:#00C'>(</span><span style='color:#070'>&#39;You&#160;can&#160;click&#160;above&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
+&#160;&#160;dx<span style='color:#00C'>:</span>&#160;<span style='color:#00C'>-</span><span style='color:purple'>99</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
+&#160;&#160;dy<span style='color:#00C'>:</span>&#160;<span style='color:purple'>15</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
+&#160;&#160;<span style='color:#C0A'>fontFamily</span><span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;arial,sans-serif&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
+&#160;&#160;<span style='color:#958'>fontSize</span><span style='color:#00C'>:</span>&#160;<span style='color:purple'>11</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
+&#160;&#160;fill<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;#fff&#39;</span>&#160;&#160;<br/>
+<span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+trace<span style='color:#00C'>(</span>d<span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 </code></div>
       <div id="result-1">
 	<p><strong>SVG XML:</strong></p>
@@ -81,7 +113,7 @@ group<span style='color:#00C'>.</span>a<span style='color:#00C'>(</span><span st
       <h2>Example 2</h2>
       <div id="svg2"></div>
       <div class="code"><p><strong>JavaScript:</strong></p><code><span style='color:#006'><b>var</b></span>&#160;d&#160;<span style='color:#00C'>=</span>&#160;SVG<span style='color:#00C'>.</span>createDocument<span style='color:#00C'>(</span><span style='color:purple'>600</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>300</span><span style='color:#00C'>,</span>&#160;<span style='color:#070'>&#39;test2&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
-d<span style='color:#00C'>.</span>addNamespace<span style='color:#00C'>(</span><span style='color:#070'>&#39;http://www.w3.org/1999/xlink&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#070'>&#39;xmlns:xlink&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+d<span style='color:#00C'>.</span>useXLink<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 &#160;&#160;<br/>
 <span style='color:#006'><b>var</b></span>&#160;defs&#160;<span style='color:#00C'>=</span>&#160;d<span style='color:#00C'>.</span>defs<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 <span style='color:#006'><b>var</b></span>&#160;gradient&#160;<span style='color:#00C'>=</span>&#160;defs<span style='color:#00C'>.</span><span style='color:#55C'>node</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;linearGradient&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
@@ -96,32 +128,31 @@ d<span style='color:#00C'>.</span>addNamespace<span style='color:#00C'>(</span><
 gradient<span style='color:#00C'>.</span><span style='color:#55C'>node</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;stop&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;offset<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;0%&#39;</span><span style='color:#00C'>,</span>&#160;stopColor<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;#ccc&#39;</span><span style='color:#00C'>,</span>&#160;stopOpacity<span style='color:#00C'>:</span>&#160;<span style='color:purple'>1</span>&#160;<span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 gradient<span style='color:#00C'>.</span><span style='color:#55C'>node</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;stop&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;offset<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;100%&#39;</span><span style='color:#00C'>,</span>&#160;stopColor<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;#f9f9f9&#39;</span><span style='color:#00C'>,</span>&#160;stopOpacity<span style='color:#00C'>:</span>&#160;<span style='color:purple'>1</span>&#160;<span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 &#160;&#160;<br/>
-d<span style='color:#00C'>.</span>rect<span style='color:#00C'>(</span><span style='color:purple'>0</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>0</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>599</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>299</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
+d<span style='color:#00C'>.</span>rect<span style='color:#00C'>(</span><span style='color:purple'>0</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>0</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>600</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>300</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
 &#160;&#160;stroke<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;#000&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
-&#160;&#160;strokeWidth<span style='color:#00C'>:</span>&#160;<span style='color:purple'>3</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
+&#160;&#160;strokeWidth<span style='color:#00C'>:</span>&#160;<span style='color:purple'>4</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;fill<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;url(#gradient2)&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;shapeRendering<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;crispEdges&#39;</span>&#160;&#160;<br/>
 <span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 &#160;&#160;<br/>
-d<span style='color:#00C'>.</span>image<span style='color:#00C'>(</span><span style='color:#070'>&#39;http://www.poppa.se/blog/wp-content/themes/poppa/img/logo.png&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
+<span style='color:#006'><b>var</b></span>&#160;img&#160;<span style='color:#00C'>=</span>&#160;d<span style='color:#00C'>.</span>image<span style='color:#00C'>(</span><span style='color:#070'>&#39;http://www.poppa.se/blog/wp-content/themes/poppa/img/logo.png&#39;</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
 &#160;&#160;x<span style='color:#00C'>:</span>&#160;<span style='color:purple'>300</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;y<span style='color:#00C'>:</span>&#160;<span style='color:purple'>120</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;width<span style='color:#00C'>:</span>&#160;<span style='color:purple'>229</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;<span style='color:#958'>height</span><span style='color:#00C'>:</span>&#160;<span style='color:purple'>52</span>&#160;&#160;<br/>
 <span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 &#160;&#160;<br/>
-d<span style='color:#00C'>.</span>rect<span style='color:#00C'>(</span><span style='color:purple'>300</span><span style='color:#00C'>-</span><span style='color:purple'>20</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>120</span><span style='color:#00C'>-</span><span style='color:purple'>20</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>229</span><span style='color:#00C'>+</span><span style='color:purple'>40</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>52</span><span style='color:#00C'>+</span><span style='color:purple'>40</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
+<span style='color:#006'><b>var</b></span>&#160;re1&#160;<span style='color:#00C'>=</span>&#160;d<span style='color:#00C'>.</span>rect<span style='color:#00C'>(</span><span style='color:purple'>300</span><span style='color:#00C'>-</span><span style='color:purple'>20</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>120</span><span style='color:#00C'>-</span><span style='color:purple'>20</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>229</span><span style='color:#00C'>+</span><span style='color:purple'>40</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>52</span><span style='color:#00C'>+</span><span style='color:purple'>40</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
 &#160;&#160;stroke<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;#000&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;strokeWidth<span style='color:#00C'>:</span>&#160;<span style='color:purple'>1</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;fill<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;none&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
 &#160;&#160;shapeRendering<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;crispEdges&#39;</span>&#160;&#160;<br/>
 <span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 &#160;&#160;<br/>
-d<span style='color:#00C'>.</span>rect<span style='color:#00C'>(</span><span style='color:purple'>305</span><span style='color:#00C'>-</span><span style='color:purple'>20</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>125</span><span style='color:#00C'>-</span><span style='color:purple'>20</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>229</span><span style='color:#00C'>+</span><span style='color:purple'>40</span><span style='color:#00C'>,</span>&#160;<span style='color:purple'>52</span><span style='color:#00C'>+</span><span style='color:purple'>40</span><span style='color:#00C'>,</span>&#160;<span style='color:#00C'>{</span>&#160;&#160;<br/>
-&#160;&#160;stroke<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;#000&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
-&#160;&#160;strokeWidth<span style='color:#00C'>:</span>&#160;<span style='color:purple'>1</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
-&#160;&#160;fill<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;none&#39;</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
-&#160;&#160;shapeRendering<span style='color:#00C'>:</span>&#160;<span style='color:#070'>&#39;crispEdges&#39;</span>&#160;&#160;<br/>
+<span style='color:#006'><b>var</b></span>&#160;re2&#160;<span style='color:#00C'>=</span>&#160;re1<span style='color:#00C'>.</span>clone<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+re2<span style='color:#00C'>.</span><span style='color:#C0A'>setAttribute</span><span style='color:#00C'>(</span><span style='color:#00C'>{</span>&#160;&#160;<br/>
+&#160;&#160;x<span style='color:#00C'>:</span>&#160;re2<span style='color:#00C'>.</span><span style='color:#C0A'>getAttribute</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;x&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>+</span><span style='color:purple'>5</span><span style='color:#00C'>,</span>&#160;&#160;<br/>
+&#160;&#160;y<span style='color:#00C'>:</span>&#160;re2<span style='color:#00C'>.</span><span style='color:#C0A'>getAttribute</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;y&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>+</span><span style='color:purple'>5</span>&#160;&#160;<br/>
 <span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
 </code></div>
       <div id="result-2">

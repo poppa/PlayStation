@@ -31,7 +31,7 @@
  * @param DOMNode svgNode
  *  DOM element node
  */
-var SVG = function(svgNode)
+var SVG = function(svgNode, parent)
 {
   var svg = svgNode;
   var workingNode = svg;
@@ -138,6 +138,38 @@ var SVG = function(svgNode)
     return workingNode.appendChild(node);
   } // }}}
 
+  /* Checks if val is an integer
+   *
+   * @param string val
+   */
+  function isInt(val) // {{{
+  {
+    return val.match(/^-?[0-9]+$/) && true || false;
+  } // }}}
+
+  /* Checks if val is a float
+   *
+   * @param string val
+   */
+  function isFloat(val) // {{{
+  {
+    return val.match(/^-?[0-9]+(\.[0-9]+)?$/) && true || false;
+  } // }}}
+
+  /* Converts val to int or float if it is an integer or float value
+   *
+   * @param string val
+   */
+  function autoCast(val) // {{{
+  {
+    if (isInt(val))
+      return parseInt(val, 10);
+    else if (isFloat(val))
+      return parseFloat(val, 10);
+
+    return val;
+  } // }}}
+
   /* **********************************************
    * Return public methods and members */ return {
   /* *********************************************/
@@ -146,6 +178,13 @@ var SVG = function(svgNode)
    */
   type: 'SVG',
 
+  /* Returns the parent object
+   */
+  parent: function() // {{{
+  {
+    return parent;
+  }, // }}}
+  
   /* Add a namespace to the root node
    *
    * @param string nsURI
@@ -160,6 +199,13 @@ var SVG = function(svgNode)
     SVG.namespaces[localname] = nsURI;
   }, // }}}
 
+  /* Convinience method for adding the XLink namespace
+   */
+  useXLink: function() // {{{
+  {
+    this.addNamespace(SVG.XLINK_NS, 'xmlns:xlink');
+  }, // }}}
+  
   /* Turns the SVG element into an XML tree
    */
   toString: function() // {{{
@@ -209,7 +255,7 @@ var SVG = function(svgNode)
    */
   appendChild: function(n) // {{{
   {
-    return new SVG(add(n));
+    return new SVG(add(n), this);
   }, // }}}
 
   /* Set working node, which is the node newly created nodes will be appended
@@ -223,6 +269,15 @@ var SVG = function(svgNode)
       workingNode = svg;
     else
       workingNode = node;
+  }, // }}}
+
+  /* Makes a copy of the current object
+   */
+  clone: function() // {{{
+  {
+    var n = svg.cloneNode(true);
+    n = svg.parentNode.appendChild(n);
+    return new SVG(n, parent);
   }, // }}}
 
   /* Set attributes on the working node
@@ -241,6 +296,27 @@ var SVG = function(svgNode)
     }
     else
       addAttribute(workingNode, name, value);
+    
+    return this;
+  }, // }}}
+
+  /* Returns the attribute name or all attributes if name is omitted
+   *
+   * @param string name
+   */
+  getAttribute: function(name) // {{{
+  {
+    if (!name) {
+      var o = {};
+      for (var i = 0; i < svg.attributes.length; i++) {
+      	var a = svg.attributes.item(i);
+      	o[a.name] = autoCast(a.value);
+      }
+
+      return o;
+    }
+
+    return autoCast(svg.getAttribute(name));
   }, // }}}
 
   /* Creates and appends a text node
@@ -258,15 +334,15 @@ var SVG = function(svgNode)
   text: function(text, x, y, attr) // {{{
   {
     if (!attr) attr = {};
-    attr.x = x;
-    attr.y = y;
+    if (x != null) attr.x = x;
+    if (y != null) attr.y = y;
     var n = ce('text', attr);
     if (text) {
       var t = svg.ownerDocument.createTextNode(text);
       n.appendChild(t);
     }
     add(n);
-    return new SVG(n);
+    return new SVG(n, this);
   }, // }}}
 
   /* Creates a tspan node
@@ -279,7 +355,7 @@ var SVG = function(svgNode)
     var n = ce('tspan', attr);
     var t = svg.ownerDocument.createTextNode(text);
     n.appendChild(t);
-    return new SVG(add(n));
+    return new SVG(add(n), this);
   }, // }}}
 
   /* Creates a tref node
@@ -304,7 +380,7 @@ var SVG = function(svgNode)
     var n = ce('textpath', attr);
     var t = svg.ownerDocument.createTextNode(text);
     n.appendChild(t);
-    return new SVG(add(n));
+    return new SVG(add(n), this);
   }, // }}}
 
   /* Creates an image
@@ -316,7 +392,7 @@ var SVG = function(svgNode)
   {
     if (!attr) attr = {};
     attr['xlink:href'] = src;
-    return new SVG(add(ce('image', attr)));
+    return new SVG(add(ce('image', attr)), this);
   }, // }}}
 
   /* Creates an arbitrary node
@@ -326,14 +402,16 @@ var SVG = function(svgNode)
    */
   node: function(name, attr) // {{{
   {
-    return new SVG(add(ce(name, attr)));
+    return new SVG(add(ce(name, attr)), this);
   }, // }}}
 
   /* Creates a defs node
+   *
+   * @param object attr
    */
-  defs: function() // {{{
+  defs: function(attr) // {{{
   {
-    return new SVG(add(ce('defs')));
+    return new SVG(add(ce('defs', attr)), this);
   }, // }}}
 
   /* Creates a new SVG node
@@ -342,14 +420,16 @@ var SVG = function(svgNode)
    */
   svg: function(attr) // {{{
   {
-    return new SVG(add(ce('svg', attr)));
+    return new SVG(add(ce('svg', attr)), this);
   }, // }}}
 
   /* Creates a g node
+   *
+   * @param object attr
    */
-  g: function() // {{{
+  g: function(attr) // {{{
   {
-    return new SVG(add(ce('g')));
+    return new SVG(add(ce('g', attr)), this);
   }, // }}}
 
   /* Creates a rectangle
@@ -367,7 +447,7 @@ var SVG = function(svgNode)
     attr.y = y;
     attr.width = width;
     attr.height = height;
-    return new SVG(add(ce('rect', attr)));
+    return new SVG(add(ce('rect', attr)), this);
   }, // }}}
 
   /* Creates an A node
@@ -383,7 +463,7 @@ var SVG = function(svgNode)
     var n = ce('a', attr);
     n.appendChild(contents.getDocument());
     add(n);
-    return new SVG(n);
+    return new SVG(n, this);
   }, // }}}
 
   /* Draws a circle
@@ -402,7 +482,7 @@ var SVG = function(svgNode)
     attr.cx = x;
     attr.cy = y;
     attr.r  = r;
-    return new SVG(add(ce('circle', attr)));
+    return new SVG(add(ce('circle', attr)), this);
   }, // }}}
 
   /* Draws an ellipse
@@ -422,7 +502,7 @@ var SVG = function(svgNode)
     attr.cy = y;
     attr.rx = rx;
     attr.ry = ry;
-    return new SVG(add(ce('ellipse', attr)));
+    return new SVG(add(ce('ellipse', attr)), this);
   }, // }}}
 
   /* Draws a polyline
@@ -434,7 +514,7 @@ var SVG = function(svgNode)
   {
     if (!attr) attr = {};
     attr.points = points;
-    return new SVG(add(ce('polyline', attr)));
+    return new SVG(add(ce('polyline', attr)), this);
   }, // }}}
 
   /* Draws a polygon
@@ -446,7 +526,7 @@ var SVG = function(svgNode)
   {
     if (!attr) attr = {};
     attr.points = points;
-    return new SVG(add(ce('polygon', attr)));
+    return new SVG(add(ce('polygon', attr)), this);
   }, // }}}
 
   /* Draws a line
@@ -474,7 +554,7 @@ var SVG = function(svgNode)
 
     if (!attr.stroke) attr.stroke = '#000';
 
-    return new SVG(add(ce('line', attr)));
+    return new SVG(add(ce('line', attr)), this);
   }, // }}}
 
   /* Draws a path
@@ -488,7 +568,7 @@ var SVG = function(svgNode)
     if (!attr) attr = {};
     attr.d = lines;
     if (!attr.fill) attr.fill = 'none';
-    return new SVG(add(ce('path', attr)));
+    return new SVG(add(ce('path', attr)), this);
   } // }}}
 
   /***/};/***/

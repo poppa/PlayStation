@@ -88,10 +88,10 @@ var URI = function(uri)
       path     = m[7];
       query    = m[9];
       fragment = m[10];
-  
+
       if (!port && scheme)
 	port = ports[scheme];
-  
+
       if (query && query.length) {
 	var q = query.split('&');
 	for (var i = 0; i < q.length; i++) {

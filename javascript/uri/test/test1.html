@@ -13,7 +13,7 @@
       BODY {
 	font: 80%/140% arial, sans-serif;
 	}
-      PRE { 
+      PRE {
 	font-size: 11px;
 	line-height: 130%;
 	font-family: liberation mono, monospace;
@@ -24,31 +24,26 @@
   </head>
   <body>
     <h1>URI test</h1>
-    <p><strong>23</strong> lines of <strong>JavaScript</strong> code</p>
-    <ol><li>$<span style='color:#00C'>(</span><span style='color:#55C'>document</span><span style='color:#00C'>)</span><span style='color:#00C'>.</span>ready<span style='color:#00C'>(</span><span style='color:#006'><b>function</b></span><span style='color:#00C'>(</span><span style='color:#00C'>)</span>&#160;&#160;</li>
-      <li><span style='color:#00C'>{</span>&#160;&#160;</li>
-      <li>&#160;&#160;<span style='color:#006'><b>var</b></span>&#160;uri&#160;<span style='color:#00C'>=</span>&#160;<span style='color:#006'><b>new</b></span>&#160;URI<span style='color:#00C'>(</span><span style='color:#070'>&#39;http://poppa.se&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;</li>
-      <li>&#160;&#160;uri<span style='color:#00C'>.</span>path&#160;<span style='color:#00C'>=</span>&#160;<span style='color:#070'>&#39;/blog/&#39;</span><span style='color:#00C'>;</span>&#160;&#160;</li>
-      <li>&#160;&#160;uri<span style='color:#00C'>.</span>variables<span style='color:#00C'>.</span>offset&#160;<span style='color:#00C'>=</span>&#160;<span style='color:purple'>10</span><span style='color:#00C'>;</span>&#160;&#160;</li>
-      <li>&#160;&#160;</li>
-      <li>&#160;&#160;<span style='color:#818A9E'>//&#160;Print&#160;example&#160;1</span>&#160;</li>
-      <li>&#160;&#160;puts<span style='color:#00C'>(</span><span style='color:#070'>&#34;&#60;b&#62;Example&#160;1:&#60;/b&#62;&#160;{0}\n&#34;</span><span style='color:#00C'>,</span>&#160;uri<span style='color:#00C'>.</span>toString<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;</li>
-      <li>&#160;&#160;</li>
-      <li>&#160;&#160;<span style='color:#006'><b>delete</b></span>&#160;uri<span style='color:#00C'>.</span>variables<span style='color:#00C'>.</span>offset<span style='color:#00C'>;</span>&#160;&#160;</li>
-      <li>&#160;&#160;</li>
-      <li>&#160;&#160;uri<span style='color:#00C'>.</span>path&#160;<span style='color:#00C'>=</span>&#160;<span style='color:#070'>&#39;/blog/tags/roxen/&#39;</span><span style='color:#00C'>;</span>&#160;&#160;</li>
-      <li>&#160;&#160;uri<span style='color:#00C'>.</span>fragment&#160;<span style='color:#00C'>=</span>&#160;<span style='color:#070'>&#39;content&#39;</span><span style='color:#00C'>;</span>&#160;&#160;</li>
-      <li>&#160;&#160;</li>
-      <li>&#160;&#160;<span style='color:#818A9E'>//&#160;Print&#160;example&#160;2</span>&#160;</li>
-      <li>&#160;&#160;puts<span style='color:#00C'>(</span><span style='color:#070'>&#34;&#60;b&#62;Example&#160;2:&#60;/b&#62;&#160;{0}\n&#34;</span><span style='color:#00C'>,</span>&#160;uri<span style='color:#00C'>.</span>toString<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;</li>
-      <li>&#160;&#160;</li>
-      <li>&#160;&#160;<span style='color:#006'><b>var</b></span>&#160;uri&#160;<span style='color:#00C'>=</span>&#160;<span style='color:#006'><b>new</b></span>&#160;URI<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;</li>
-      <li>&#160;&#160;uri<span style='color:#00C'>.</span><span style='color:#C00'>parse</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;http://poppa.se&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;</li>
-      <li>&#160;&#160;</li>
-      <li>&#160;&#160;<span style='color:#818A9E'>//&#160;Print&#160;example&#160;3</span>&#160;</li>
-      <li>&#160;&#160;puts<span style='color:#00C'>(</span><span style='color:#070'>&#34;&#60;b&#62;Example&#160;3:&#60;/b&#62;&#160;{0}&#34;</span><span style='color:#00C'>,</span>&#160;uri<span style='color:#00C'>.</span>toString<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;</li>
-      <li><span style='color:#00C'>}</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;</li>
-    </ol>
+    <div class="code"><p><strong>JavaScript:</strong></p><code><span style='color:#006'><b>var</b></span>&#160;uri&#160;<span style='color:#00C'>=</span>&#160;<span style='color:#006'><b>new</b></span>&#160;URI<span style='color:#00C'>(</span><span style='color:#070'>&#39;http://poppa.se&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+uri<span style='color:#00C'>.</span>path&#160;<span style='color:#00C'>=</span>&#160;<span style='color:#070'>&#39;/blog/&#39;</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+uri<span style='color:#00C'>.</span>variables<span style='color:#00C'>.</span>offset&#160;<span style='color:#00C'>=</span>&#160;<span style='color:purple'>10</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+<span style='color:#818A9E'>//&#160;Print&#160;example&#160;1</span>&#160;<br/>
+puts<span style='color:#00C'>(</span><span style='color:#070'>&#34;&#60;b&#62;Example&#160;1:&#60;/b&#62;&#160;{0}\n&#34;</span><span style='color:#00C'>,</span>&#160;uri<span style='color:#00C'>.</span>toString<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+<span style='color:#006'><b>delete</b></span>&#160;uri<span style='color:#00C'>.</span>variables<span style='color:#00C'>.</span>offset<span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+uri<span style='color:#00C'>.</span>path&#160;<span style='color:#00C'>=</span>&#160;<span style='color:#070'>&#39;/blog/tags/roxen/&#39;</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+uri<span style='color:#00C'>.</span>fragment&#160;<span style='color:#00C'>=</span>&#160;<span style='color:#070'>&#39;content&#39;</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+<span style='color:#818A9E'>//&#160;Print&#160;example&#160;2</span>&#160;<br/>
+puts<span style='color:#00C'>(</span><span style='color:#070'>&#34;&#60;b&#62;Example&#160;2:&#60;/b&#62;&#160;{0}\n&#34;</span><span style='color:#00C'>,</span>&#160;uri<span style='color:#00C'>.</span>toString<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+uri<span style='color:#00C'>.</span><span style='color:#C00'>parse</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;http://google.com&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+&#160;&#160;<br/>
+<span style='color:#818A9E'>//&#160;Print&#160;example&#160;3</span>&#160;<br/>
+puts<span style='color:#00C'>(</span><span style='color:#070'>&#34;&#60;b&#62;Example&#160;3:&#60;/b&#62;&#160;{0}&#34;</span><span style='color:#00C'>,</span>&#160;uri<span style='color:#00C'>.</span>toString<span style='color:#00C'>(</span><span style='color:#00C'>)</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;<br/>
+</code></div>
     <div id="console">
       <p><strong>Result:</strong></p>
       <pre></pre>
