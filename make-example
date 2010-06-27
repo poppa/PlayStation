@@ -1,0 +1,109 @@
+#!/usr/bin/env pike
+
+#define USAGE sprintf("Usage: %s html-file", argv[0])
+
+private array(string) code_container = ({});
+private Syntaxer.Hilite highlighter;
+
+int main(int argc, array(string) argv)
+{
+  string file;
+  
+  if (argc < 2) {
+    werror("Missing required arguments!\n%s\n", USAGE);
+    return 1;
+  }
+
+  file = argv[1];
+
+  if (!Stdio.exist(file)) {
+    werror("Input file %O doesn't exist!\n", file);
+    return 1;
+  }
+
+  string path = dirname(combine_path(dirname(__FILE__), file));
+
+  highlighter = Syntaxer.get_parser("js");
+  highlighter->line_wrap = ({ "", "<br/>\n" });
+
+  String.Buffer buf = String.Buffer();
+  function add = buf->add;
+
+  Parser.HTML parser = Parser.HTML();
+
+  parser->add_container("script",
+    lambda (Parser.HTML p, mapping attr, string content) {
+      if (attr->src && !has_prefix(attr->src, "http://") && 
+      	 !has_prefix(attr->src, "https"))
+      {
+     	string src = combine_path(path, attr->src);
+      	parse_script(src);
+      }
+      add(p->current());
+      return ({});
+    }
+  );
+
+  int(0..1) add_content = 1;
+  int captures = 0;
+
+  parser->_set_tag_callback(
+    lambda (Parser.HTML p, string tag) {
+      if (!add_content && tag == "</div>")
+      	add_content = 1;
+
+      if (p->tag_name() == "div") {
+      	add(p->current());
+      	if (p->tag_args()["class"] == "code") {
+      	  if (has_index(code_container, captures)) {
+	    add_content = 0;
+	    add("<p><strong>JavaScript:</strong></p>");
+      	    add("<code>");
+      	    add( code_container[captures] );
+      	    add("</code>");
+      	    captures++;
+      	  }
+      	}
+      }
+      else if (add_content)
+      	add(p->current());
+    }
+  );
+
+  parser->_set_data_callback(
+    lambda (Parser.HTML p, string content) {
+      if (add_content)
+	add(content);
+    }
+  );
+
+  parser->feed(Stdio.read_file(file), 1)->finish()->read();
+  Stdio.write_file(file, buf->get());
+
+  return 0;
+}
+
+private void parse_script(string path)
+{
+  Parser.HTML parser = Parser.HTML();
+  parser->add_container("capture",
+    lambda (Parser.HTML p, mapping attr, string contents) {
+      contents = String.trim_all_whites(contents);
+      array(string) lines = ({});
+      foreach (contents/"\n", string line) {
+      	if (has_prefix(line, "  "))
+      	  line = line[2..];
+
+      	if (String.trim_all_whites(line) == "//")
+      	  continue;
+
+      	lines += ({ line });
+      }
+
+      contents = highlighter->parse(lines*"\n");
+      code_container += ({ contents });
+    }
+  );
+
+  parser->feed(Stdio.read_file(path))->finish();
+}

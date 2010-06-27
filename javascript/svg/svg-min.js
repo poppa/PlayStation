@@ -17,11 +17,6 @@ n+=name[i];else if(c>57&&c<97){if(i>0&&c!=58)n+='-';n+=name[i].toLowerCase();}
 else throw('Unhandled char: '+n[i]);}
 o[n]=obj[name];}
 return o;}
-function DOMDocument(owner)
-{var obj;var docsys='-//W3C//DTD XHTML 1.0 Strict//EN';var docpub='http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd';owner=owner||document;if(owner.implementation&&owner.implementation.createDocument){var doctype=owner.implementation.createDocumentType('html',docsys,docpub);obj=owner.implementation.createDocument(SVG.XHTML_NS,'html',doctype);}
-else if(document.all)
-obj=new ActiveXObject("MSXML3.DOMDocument");else
-throw"Creation of DOMDocuments not supported!";return obj;}
 function add(node)
 {if(node.type&&node.type=='SVG')
 node=node.getDocument();return workingNode.appendChild(node);}

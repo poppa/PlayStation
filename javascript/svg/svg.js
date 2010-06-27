@@ -126,31 +126,6 @@ var SVG = function(svgNode)
     return o;
   } // }}}
 
-  /* Creates a new DOM/HTML document
-   *
-   * @param Document owner
-   */
-  function DOMDocument(owner) // {{{
-  {
-    var obj;
-    var docsys = '-//W3C//DTD XHTML 1.0 Strict//EN';
-    var docpub = 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd';
-
-    owner = owner || document;
-
-    if (owner.implementation && owner.implementation.createDocument) {
-      var doctype = owner.implementation.createDocumentType('html', docsys,
-      	                                                    docpub);
-      obj = owner.implementation.createDocument(SVG.XHTML_NS,'html',doctype);
-    }
-    else if (document.all)
-      obj = new ActiveXObject("MSXML3.DOMDocument");
-    else
-      throw "Creation of DOMDocuments not supported!";
-
-    return obj;
-  } // }}}
-
   /* Appends node to the working node
    *
    * @param DOMNode|SVG node
@@ -196,13 +171,13 @@ var SVG = function(svgNode)
    *
    * @param int tabsize
    */
-  toPrettyString: function(tabsize)
+  toPrettyString: function(tabsize) // {{{
   {
     if (!document.createTreeWalker)
       return this.toString();
 
     return new XMLIndenter(svg).indent(tabsize);
-  },
+  }, // }}}
 
   /* Turns the SVG element into a highlighthed and formatted XML tree.
    * Three CSS classes is used for the highlighting:
@@ -213,13 +188,13 @@ var SVG = function(svgNode)
    *
    * @param int tabsize
    */
-  toHighlightedString: function(tabsize)
+  toHighlightedString: function(tabsize) // {{{
   {
     if (!document.createTreeWalker)
       return this.toString();
 
     return new XMLIndenter(svg).highlight(tabsize);
-  },
+  }, // }}}
 
   /* Getter for the SVG element node
    */
@@ -460,7 +435,7 @@ var SVG = function(svgNode)
     if (!attr) attr = {};
     attr.points = points;
     return new SVG(add(ce('polyline', attr)));
-  }, // {{{
+  }, // }}}
 
   /* Draws a polygon
    *
