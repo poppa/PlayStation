@@ -1,5 +1,5 @@
 .deps
-*.[oac]
+*.[oa]
 *~
 *.stamp
 *.gmo
@@ -22,7 +22,6 @@ intltool-merge.in
 intltool-update.in
 libtool
 ltmain.sh
-Makefile
 Makefile.in
 !po/Makefile.in
 missing
