@@ -1,0 +1,10 @@
+This is a Vala version of Douglas Crockford's jsmin 
+(http://www.crockford.com/javascript/jsmin.html).
+
+It's simple to compile:
+
+	user@machine:~$ valac -o jsmin jsmin.vala
+	
+and simple to use:
+
+	user@machine:~$ jsmin input.js output.js 
