@@ -1,5 +1,6 @@
 all:
-	valac -o jsmin jsmin.vala
+	valac --pkg gio-2.0 -o jsmin jsmin.vala
 
 clean:
-	rm *~
+	rm -f *~ jsmin
+

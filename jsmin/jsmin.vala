@@ -1,7 +1,10 @@
 /* jsmin.vala
  * 
  * Removes unneccessary whitespace and comments from JavaScript files.
- * Compile with: valac -o jsmin jsmin.vala
+ * Compile with: valac --pkg gio-2.0 -o jsmin jsmin.vala
+ *
+ * On windows compile like:
+ * valac -D WINNT --pkg gio2.0 -o jsmin jsmin.vala
  *
  * Copyright (C) 2002 Douglas Crockford  (www.crockford.com)
  * Copyright (C) 2010 Pontus Östlund (http://www.poppa.se)
@@ -34,13 +37,19 @@ using GLib;
 
 namespace JSMin
 {
+#if WINNT
+	private const string DIR_SEPARATOR = "\\";
+#else
+	private const string DIR_SEPARATOR = "/";
+#endif
+
 	private int a;
 	private int b;
 	private int lookahead;
 	private FileStream input;
 	private FileStream output;
 	private const int EOF = FileStream.EOF;
-	private const string HELP = "Usage:\n %s input-file output-file\n";
+	private const string HELP = "Usage:\n %s input-file [output-file]\n";
 
 	int main (string[] args) 
 	{
@@ -51,18 +60,35 @@ namespace JSMin
 			}
 		}
 
-		if (args.length < 3) {
+		if (args.length < 2) {
 			stderr.printf("Missing required arguments!\n" + HELP, args[0]);
 			return 1;
 		}
 
-		if (!FileUtils.test(args[1], FileTest.EXISTS)) {
-			stderr.printf("Input file \"%s\" doesn't exist!\n", args[1]);
+		string outfile, infile;
+		infile = args[1];
+
+		if (!FileUtils.test(infile, FileTest.EXISTS)) {
+			stderr.printf("Input file \"%s\" doesn't exist!\n", infile);
 			return 1;
 		}
 
-		input = FileStream.open(args[1], "r");
-		output = FileStream.open(args[2], "w");
+		if (args.length > 2)
+			outfile = args[2];
+		else {
+			File f = File.new_for_path(infile);
+			string dir = f.get_parent().get_path();
+			string[] parts = f.get_basename().split(".");
+			string name = parts[0] + "-min";
+			if (parts.length > 1)
+				for (int i = 1; i < parts.length; i++)
+					name += "." + parts[i];
+
+			outfile = dir + DIR_SEPARATOR + name;
+		}
+
+		input = FileStream.open(infile, "r");
+		output = FileStream.open(outfile, "w");
 
 		jsmin();
 
@@ -257,18 +283,18 @@ namespace JSMin
 					a = get();
 					if (a == '/')
 						break;
-					
+
 					if (a == '\\') {
 						add(a);
 						a = get();
 					}
-				
+
 					if (a == EOF)
 						error("Unterminated regexp literal!");
-					
+
 					add(a);
 				}
-			
+
 				b = next();   	
 			}
 		}

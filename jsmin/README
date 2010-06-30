@@ -3,8 +3,20 @@ This is a Vala version of Douglas Crockford's jsmin
 
 It's simple to compile:
 
-	user@machine:~$ valac -o jsmin jsmin.vala
+	user@machine:~$ valac --pkg gio-2.0 -o jsmin jsmin.vala
+	
+On Windows:
+
+	valac -D WINNT --pkg gio-2.0 -o jsmin jsmin.vala
 	
 and simple to use:
 
-	user@machine:~$ jsmin input.js output.js 
+	user@machine:~$ jsmin input.js
+	
+will generate input-min.js
+
+or
+
+	user@machine:~$ jsmin input.js output.js
+	
+will of course generate output.js
