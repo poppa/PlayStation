@@ -31,7 +31,7 @@ int main(int argc, array(string) argv)
   mapping(string:string) autz = read_tokens();
 
   if (!autz) {
-    string url = api->get_auth_url("http://localhost/twitter/", 1);
+    string url = api->get_auth_url("http://poppa.se/token.php");
     token = api->get_token();
 
     string cmd;
