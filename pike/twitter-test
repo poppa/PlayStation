@@ -1,0 +1,118 @@
+#!/usr/bin/env pike
+/* -*- Mode: Pike; indent-tabs-mode: t; c-basic-offset: 2; tab-width: 8 -*- */
+
+import Social.Twitter;
+import Security.OAuth;
+
+constant CONSUMER_KEY = "";
+constant CONSUMER_SECRET = "";
+
+#define DIE(MSG...)    \
+  do {                 \
+    rm(auth_file);     \
+    werror(MSG);       \
+    exit(1);           \
+  } while (0)
+
+string auth_file = "twitter-auth.txt";
+
+int main(int argc, array(string) argv)
+{
+  if (!sizeof(CONSUMER_KEY))
+    DIE("You must add a consumer key to the CONSUMER_KEY constant!\n");
+
+  if (!sizeof(CONSUMER_SECRET))
+    DIE("You must add a consumer secret to the CONSUMER_SECRET constant!\n");
+  
+  Consumer consumer = Consumer(CONSUMER_KEY, CONSUMER_SECRET);
+  Token token = Token(0,0);
+  Api api = Api(consumer, token);
+
+  mapping(string:string) autz = read_tokens();
+
+  if (!autz) {
+    string url = api->get_auth_url("http://localhost/twitter/", 1);
+    token = api->get_token();
+
+    string cmd;
+#ifdef __NT__
+    cmd = "start";
+#else
+    // Linux
+    if (Process.run(({ "which", "xdg-open" }))->exitcode == 0)
+      cmd = "xdg-open";
+    // Mac (I think)
+    else if (Process.run(({ "which", "open" }))->exitcode == 0)
+      cmd = "open";
+#endif
+
+    if (!cmd)
+      DIE("No command to launch browser detected!\n");
+
+    if (mixed e = catch(Process.create_process(({ cmd, url })))) {
+      DIE("Unable to open browser.\nAuthentication failed!\n%s", 
+          describe_backtrace(e));
+    }
+
+    write("\nCopy the \"oauth_verifier\" querystring value from your browser\n"
+          "Now hit any key to continue\n\n");
+
+    gets();
+
+    string tok = gets("Paste the oauth_verifier: ");
+    if (!(token = api->get_access_token(tok)))
+      DIE("Unable to get access token!\n");
+    
+    api->set_token(token);
+    save_tokens(token);
+  }
+  else {
+    token->key = autz->token;
+    token->secret = autz->secret;
+    api->set_token(token);
+  }
+
+  User user = api->verify_credentials();
+  if (!user)
+    DIE("Failed verifying user!\n");
+
+  array(Message) a = api->get_home_timeline();
+  
+  write("\n### Hello %s ###\n\n", string_to_utf8(user->name)); 
+
+  foreach (a, Message m) {
+    write("* BY %s\n  %s\n\n", upper_case(string_to_utf8(m->user->name)),
+                               string_to_utf8(m->text));
+  }
+
+  return 0;
+}
+
+string gets(mixed ... msg)
+{
+  if (msg && sizeof(msg))
+    write(@msg);
+
+  return String.trim_all_whites(Stdio.stdin.gets());
+}
+
+mapping(string:string) read_tokens()
+{
+  if (!Stdio.exist(auth_file))
+    return 0;
+
+  mapping(string:string) out = ([]);
+  foreach (Stdio.read_file(auth_file)/"\n", string ln) {
+    sscanf(ln, "%s:%s", string key, string token);
+    out[key] = token;
+  }
+
+  return out;
+}
+
+void save_tokens(Token token)
+{
+  string s = "token:" + token->key + "\n"
+             "secret:" + token->secret;
+  Stdio.write_file(auth_file, s);
+}
