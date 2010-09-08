@@ -1,0 +1,6 @@
+content     domainswapper    chrome/content/	contentaccessible=yes
+
+locale      domainswapper    en-US    locale/en-US/
+locale      domainswapper    sv-SE    locale/sv-SE/
+
+overlay     chrome://browser/content/browser.xul	chrome://domainswapper/content/domainSwapperOverlay.xul	application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://domainswapper/locale/domainswapper.dtd">
+
+<overlay
+  id="domainSwapperOverlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+>
+
+  <script type="application/x-javascript"
+	  src="chrome://domainswapper/content/domainSwapperOverlay.js"
+  />
+
+  <script type="application/x-javascript"
+	  src="chrome://domainswapper/content/Manager.js"
+  />
+
+  <window id='main-window'>
+    <stringbundleset id="strbundles">
+      <stringbundle id="domainswapper-stringbundle"
+		    src="chrome://domainswapper/locale/domainswapper.properties"
+      />
+    </stringbundleset>
+  </window>
+
+  <popup id="contentAreaContextMenu">
+    <menu id='domainswapper-context' label='&domainswapper.title;'
+	  insertafter='context-stop' onpopupshowing='DomainSwapper.CheckMenu()'
+    />
+  </popup>
+
+</overlay>

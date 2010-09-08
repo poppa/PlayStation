@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<RDF:RDF xmlns:chrome="http://www.mozilla.org/rdf/chrome#"
+         xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+  <RDF:Seq RDF:about="urn:mozilla:overlays">
+    <RDF:li resource="chrome://browser/content/browser.xul"/>
+  </RDF:Seq>
+
+  <RDF:Seq RDF:about="chrome://browser/content/browser.xul">
+    <RDF:li>chrome://domainswapper/content/domainSwapperOverlay.xul</RDF:li>
+  </RDF:Seq>
+
+  <RDF:Seq RDF:about="urn:mozilla:package:root">
+    <RDF:li resource="urn:mozilla:package:domainswapper"/>
+  </RDF:Seq>
+
+  <RDF:Description RDF:about="urn:mozilla:package:domainswapper"
+    chrome:displayName="Domain swapper 0.2.7"
+    chrome:author="Pontus Östlund"
+    chrome:authorURL="mailto:pontus@poppa.se"
+    chrome:name="domainswapper"
+    chrome:extension="true"
+    chrome:description="Swaps the current URI to another domain"
+  />
+
+</RDF:RDF>
