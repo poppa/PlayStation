@@ -55,7 +55,7 @@ namespace Imgopt
 			if (arg_width > 0)  Image.MAX_WIDTH  = arg_width;
 			if (arg_height > 0) Image.MAX_HEIGHT = arg_height;
 
-		  Dir.recurse = arg_recurse;
+			Dir.recurse = arg_recurse;
 		}
 		catch (GLib.Error e) {
 			stderr.printf("Argument error: %s\n", e.message);
@@ -392,7 +392,7 @@ namespace Imgopt
     {
 			int[] r  = new int[2];
 			double s = Math.fmin((double)max_x / (double)org_x,
-												   (double)max_y / (double)org_y);
+			                     (double)max_y / (double)org_y);
 
 			r[0] = (int)Math.round(s * org_x);
 			r[1] = (int)Math.round(s * org_y);
