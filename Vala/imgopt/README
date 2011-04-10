@@ -1,0 +1,59 @@
+ABOUT
+--------------------------------------------------------------------------------
+imgopt is a console application for down-scaling large images to a more suitable
+format for digital publishing - web, presentations and what not. 
+
+By default the max size of images is 1280x1024 pixels, but this can be changed
+by the --width (-w) and --height (-h) flags.
+
+By default directories isn't scanned recursively but with the --recurse (-r)
+flag sub directories will also be scanned.
+
+The program takes both images and directories as argument. It will discart 
+images that doesn't need to be down scaled. TIFF and BMP images will be 
+converted to JPEG images and all images being down scaled will get the postfix
+-lowres appended to the file name. So "my-large-image.jpg" will get a copy
+named "my-large-image-lowres.jpg" which will be put in the same directory
+as the original
+
+
+INSTALLATION
+--------------------------------------------------------------------------------
+A simple:
+
+	./configure
+	make
+	sudo make install
+	
+should do it.
+
+
+USAGE
+--------------------------------------------------------------------------------
+The most simple way of using is imgopt is by just calling it:
+
+	user@comp:~$ imgopt
+	
+	which will scan the current directory for large images.
+	
+You can call the program with a single image as argument:
+
+	user@comp:~$ imgopt Images/my-image.jpg
+	
+	which will down scale "Images/my-image.jpg" to a maximum size of
+	1280x1024 pixels. A copy named "Images/my-image-lowres.jpg" will be created.
+
+You can also specify the max width and/ot height:
+
+	user@comp:~$ imgopt -w 800 -h 600 Images/my-image.jpg
+	
+You can also call the program with multiple arguments, mixing both images
+and directories
+
+	user@comp:~$ imgopt my-image.jpg my-second-image.jpg Images/higres 
+	
+If you want to do recursive scanning of images add the -r flag
+
+	user@comp:~$ imgopt -r Images/
+	
+
