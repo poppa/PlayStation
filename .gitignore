@@ -1,8 +1,9 @@
 .deps
-*.[oa]
+*.[doac]
 *~
 *.stamp
 *.gmo
+po/*.mo
 *.tar.bz2
 *.tar.gz
 aclocal.m4
@@ -22,8 +23,11 @@ intltool-merge.in
 intltool-update.in
 libtool
 ltmain.sh
+Makefile
 Makefile.in
 !po/Makefile.in
 missing
 mkinstalldirs
+imgopt/src/imgopt
+test
 stamp-*

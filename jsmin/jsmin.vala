@@ -220,7 +220,6 @@ namespace JSMin
 							
 							case EOF:
 								error("Unterminated string literal");
-								break;
 						}
 					}
 
