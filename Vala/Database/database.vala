@@ -19,7 +19,7 @@
  * 	Pontus Östlund <pontus@poppa.se>
  */
 
-errordomain Poppa.Sql.Error
+public errordomain Poppa.Sql.Error
 {
   ANY
 }
@@ -41,7 +41,7 @@ public abstract class Poppa.Sql.Database : Object
    * @param ...
 	 *  Variable length of Poppa.Sql.Param
    */
-  public abstract Sql.Result? query(string query, Poppa.Sql.Param[]? args)
+  public abstract Sql.Result? query(string query, ... )
     throws Sql.Error;
 	
   /**
@@ -128,6 +128,14 @@ public class Poppa.Sql.Param : Object
     this.name = name;
     _value = val;
   }
+
+	public struct Value 
+	{
+		int int_value;
+		float float_value;
+		double double_value;
+		string string_value;
+	}
 }
 
 /**

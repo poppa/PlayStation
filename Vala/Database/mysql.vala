@@ -42,12 +42,15 @@ public class Poppa.Sql.MySQL.Database : Poppa.Sql.Database
    * @param database
    */
   public Database(string host, string? username, string? password, 
-                  string database) throws Sql.Error
+                  string dbname) throws Sql.Error
   {
-    db = new Mysql.Database();
-    if (!db.real_connect(host, username, password, database, 0, null, 0)) {
-      throw new Sql.Error.ANY("Unable to connect to database: %s"
-                              .printf(db.error()));
+    this.db = new Mysql.Database();
+		if (this.db == null) 
+			new Poppa.Sql.Error.ANY("Unable to instantiate a Mysql.Database!");
+
+    if (!this.db.real_connect(host, username, password, dbname)) {
+      throw new Poppa.Sql.Error.ANY("Unable to connect to database: %s"
+                                    .printf(db.error()));
 		}
   }
 
@@ -85,7 +88,9 @@ public class Poppa.Sql.MySQL.Database : Poppa.Sql.Database
 
 				if (dbname == null || dbname.length == 0)
 					throw new Poppa.Sql.Error.ANY("Missing required database name");
-				
+
+				message("*** %s, %s, %s, %s", host, uname, pword, dbname);
+
 				this(host, uname, pword, dbname);
 			}
 			else throw new Poppa.Sql.Error.ANY("Bad connection string!");
@@ -99,18 +104,30 @@ public class Poppa.Sql.MySQL.Database : Poppa.Sql.Database
    * Query the database
    *
    * @throws
-   *  A Capa.Sql.Error if the query fails.
+   *  An Sql.Error if the query fails.
    *
    * @param query
    * @param ...
 	 *  Variable length of Poppa.Sql.Param
    */
-  public override Sql.Result? query(string query, Poppa.Sql.Param[]? args)
-    throws Sql.Error
+  public override Sql.Result? query(string query, ... )
   {
     string q;
+
+		var l = va_list();
+		Poppa.Sql.Param[] list = new Poppa.Sql.Param[]{};
 		
-		q = base.replace_params(query, args);
+		while (true)
+		{
+			Poppa.Sql.Param? p = l.arg();
+			
+			if (p == null)
+				break;
+
+			list += p;
+		}
+
+		q = base.replace_params(query, list);
 
     if (this.db.query(q) != 0)
       throw new Sql.Error.ANY("MySQL query error: %s".printf(db.error()));

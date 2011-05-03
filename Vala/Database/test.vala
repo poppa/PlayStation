@@ -27,9 +27,7 @@ int main(string[] args)
     string dbstr = "mysql://root:w1yHjx@localhost/poppa_se";
     Sql.Database db;
     db = new Sql.MySQL.Database.from_string(dbstr);
-    Sql.Result? res = db.query("SELECT * FROM wp_posts WHERE ID=@id", {
-			new Sql.Param("id", "450")
-		});
+    Sql.Result? res = db.query("SELECT * FROM wp_posts WHERE ID=@id", new Sql.Param("id", "450"));
 		
     if (res != null && res.num_rows > 0) {
       Sql.Row? row;
@@ -37,7 +35,8 @@ int main(string[] args)
         if (res.last())
           message("Last row....");
 
-        message("Row (%ld): %d, %s", row.length, row["ID"].to_int(), row["post_title"]);
+        message("Row (%ld): %d, %s", row.length, int.parse(row["ID"]), 
+                                     row["post_title"]);
       }
     }
   }
