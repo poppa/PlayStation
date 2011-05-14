@@ -1,0 +1,7 @@
+An example of how to use the Java binding in Pike.
+
+Make sure Java's CLASSPATH has a pointer to the current directory.
+
+Run `make` to compile the Java class. Then simply run the Pike script
+
+# Pontus
