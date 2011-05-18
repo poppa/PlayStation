@@ -1,91 +1,90 @@
 #!/usr/bin/env pike
 /* -*- Mode: Pike; indent-tabs-mode: t; c-basic-offset: 2; tab-width: 8 -*- */
+/* Copyright (C) 2011 Pontus Östlund (www.poppa.se)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * The Software shall be used for Good, not Evil.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+import ".";
 
-#ifdef JDEBUG
-# define TRACE(X...) werror("%s:%d: %s",basename(__FILE__),__LINE__,sprintf(X))
-#else
-# define TRACE(X...) 0
-#endif
+#define HR() write("\n%s\n\n", "-"*80)
 
 int main(int argc, array(string) argv)
 {
   object java = Java.pkg.PikeExample();
-  
-  string str = java_to_pike(java->getString());
-  write("String: %s\n\n", str);
-  
-  int rnd = java_to_pike(java->getRandomInt(12));
-  write("Random int: %d\n\n", rnd);
-  
-  mapping(string:string) table = java_to_pike(java->getHashtable());
-  write("Hashtable: %O\n\n", table);
 
-  array(string) arr = java_to_pike(java->getArrayList());
-  write("ArrayList: %O\n\n", arr);
+  Kaffe.reflect(java);
+  
+  HR();
+  
+  java->dumpString("Hello from Pike");
+  
+  HR();
+  
+  java->dumpInteger(1234);
+  java->dumpInteger(Kaffe.encode(1234));
 
-  array(mapping(string:string|int)) arr2 =
-    java_to_pike(java->getArrayOfHashtables());
-  write("ArrayList of Hashtables: %O\n", arr2);
+  HR();
+  
+  java->dumpFloat(Kaffe.encode(12.34));
+  
+  HR();
+  
+  mapping m = ([ "key-1" : "Value 1",
+                 "key-2" : "Value 2",
+                 "Key-3" : "Value 3" ]);
+  java->dumpHashtable(Kaffe.encode(m));
+
+  HR();
+
+  array(string) a = ({ "Pike", "PHP", "PERL", "Pascal", "Python" });
+  java->dumpArrayList(Kaffe.encode(a));
+  
+  HR();
+  
+  array(mapping) am = ({
+    ([ "acting-in-movies": 59,
+       "alive": 1,
+       "born": 1946,
+       "name": "Sylvester Stallone" ]),
+    ([ "acting-in-movies": 43,
+       "alive": 1,
+       "born": 1947,
+       "name": "Arnold Schwarzenegger" ]),
+    ([ "acting-in-movies": 67,
+       "alive": 1,
+       "born": 1960,
+       "name": "Julianne Moore" ]),
+    ([ "acting-in-movies": 23,
+       "alive": 0,
+       "born": 1979,
+       "name": "Heath Ledger" ])
+  });
+
+  java->dumpArrayList(Kaffe.encode(am));
+  
+  HR();
+
+  string s = Kaffe.decode(Java.pkg.PikeExample.version); 
+  write("Static string from PikeExample. It says version is: %s\n", s);
   
   return 0;
 }
-
-//! Decodes a result from Java to Pike datatypes.
-//!
-//! Handles: 
-//! @ul
-//!  @item java.util.ArrayList
-//!  @item java.util.Hashtable
-//!  @item java.lang.String
-//!  @item java.lang.Integer
-//!  @item java.lang.Double
-//!  @item java.lang.Boolean
-//! @endul
-//!
-//! @param jobj
-//!  Result from a Java method call
-mixed java_to_pike(mixed jobj) // {{{
-{
-  mixed ret;
-  string type;
-  if (objectp(jobj))
-    type = (string)jobj->getClass()->getName();
-  else
-    return jobj;
-
-  TRACE("Java type is: %s\n", type);
-  
-  switch (type)
-  {
-    case "java.util.ArrayList":
-      ret = ({});
-      foreach (values(jobj->toArray()), object o)
-      	ret += ({ java_to_pike(o) });
-
-      break;
-
-    case "java.util.Hashtable":
-      ret = ([]);
-      foreach (values(jobj->entrySet()->toArray()), object set)
-	ret[(string)set->getKey()] = java_to_pike(set->getValue());
-
-      break;
-
-    case "java.lang.String":
-      return (string)jobj;
-
-    case "java.lang.Integer":
-      return jobj->intValue();
-
-    case "java.lang.Double":
-      return jobj->floatValue();
-      
-    case "java.lang.Boolean":
-      return jobj->booleanValue();
-
-    default:
-      error("Unhandled Java type: %O\n", type);
-  }
-
-  return ret;
-} // }}}

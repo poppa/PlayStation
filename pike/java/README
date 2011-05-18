@@ -4,4 +4,10 @@ Make sure Java's CLASSPATH has a pointer to the current directory.
 
 Run `make` to compile the Java class. Then simply run the Pike script
 
+Note! If you wan't to use Java classes in a JAR file it seems you explicitly
+need to add the JAR to your CLASSPATH for Pike to find it.
+
+Note! In Swedish Java is slang for coffee, and coffee in Swedish is kaffe, 
+hence the Pike module Kaffe.pmod ;)
+
 # Pontus
