@@ -188,7 +188,7 @@ void reflect(object instance) // {{{
   }
 
   object klass = instance->getClass();
-  object obj_klass = Java.pkg[(string)klass->getName()];
+  //object obj_klass = Java.pkg[(string)klass->getName()];
 
   write("\nReflect Java class %O\n", (string)klass->getName());
 
