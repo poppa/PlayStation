@@ -20,7 +20,7 @@ var trace = function() // {{{
   console.log(s);
 }; // }}}
 
-/* Returns the current viewport: Width and height of body and window
+/*! Returns the current viewport: Width and height of body and window
  */
 var Viewport = function() // {{{
 {

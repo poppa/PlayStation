@@ -78,12 +78,10 @@ namespace JSMin
 		else {
 			File f = File.new_for_path(infile);
 			string dir = f.get_parent().get_path();
-			string[] parts = f.get_basename().split(".");
-			string name = parts[0] + "-min";
-			if (parts.length > 1)
-				for (int i = 1; i < parts.length; i++)
-					name += "." + parts[i];
-
+			
+			string basename = f.get_basename();
+			long dot = (long)basename.last_index_of(".");;
+			string name = basename.substring(0, dot)+"-min"+basename.substring(dot);
 			outfile = dir + DIR_SEPARATOR + name;
 		}
 
@@ -208,6 +206,27 @@ namespace JSMin
 				
 				case '*':
 					get();
+					int cc = peek();
+					// Skip removing comments starting with /*!
+					if (cc == '!') {
+						add('\n'); add('/'); add('*');
+						for (;;) {
+							switch (cc = get()) 
+							{
+								case '*':
+									if (peek() == '/') {
+										add('*'); add(get()); add('\n');
+										return ' ';
+									}
+									break;
+									
+								case EOF:
+									error("Unclosed block comment");
+							}
+							add(cc);
+						}
+					}
+
 					for (;;) {
 						switch (get())
 						{
@@ -217,7 +236,7 @@ namespace JSMin
 									return ' ';
 								} 
 								break;
-							
+
 							case EOF:
 								error("Unterminated string literal");
 						}
