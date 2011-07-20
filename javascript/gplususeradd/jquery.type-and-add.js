@@ -1,17 +1,22 @@
-/*!
- * Like the "add people to invite" function in Google+. Lets you type in an
- * invisible input field. A callback is called and if an array is passed back
- * from there a drop-down list is populated from which you can choose.
- *
- * Copyright (c) 2011 Pontus Östlund
- *
- * Dual licensed under the MIT and GPL licenses:
- *   http://www.opensource.org/licenses/mit-license.php
- *   http://www.gnu.org/licenses/gpl.html
+/*! Like the "add people to invite" function in Google+. Lets you type in an
+ *! invisible input field. A callback is called and if an array is passed back
+ *! from there a drop-down list is populated from which you can choose.
+ *!
+ *! Copyright (c) 2011 Pontus Östlund
+ *!
+ *! Dual licensed under the MIT and GPL licenses:
+ *!   http://www.opensource.org/licenses/mit-license.php
+ *!   http://www.gnu.org/licenses/gpl.html
  */
 (function($) {
   if ($ == undefined) throw 'jQuery not available';
 
+  /* The main object handling the replacement of the "add link" with the input
+   * and what not. 
+   *
+   * @param Object config
+   * @param domElement element
+   */
   var Handler = function(config, element) {
     var handler = this,
     my          = $(element),
@@ -23,11 +28,25 @@
     storage     = new Storage(),
     add_a       = my.find('a.add-element'),
     blur = function() {
+      hideInput();
+      rmPopup();
+    },
+    blurNoFocus = function() {
+      hideInput(true);
+      rmPopup();
+    },
+    hideInput = function(nofocus) {
       inp.css('display','none');
-      add_a.css('display','inline-block').focus();
+      add_a.css('display','inline-block');
+      if (!nofocus) add_a.focus();
       $(document).unbind('click');
+    },
+    rmPopup = function() {
       $(inp[0].popup).remove();
       inp[0].popup = null;
+    },
+    keepInput = function() {
+      inp[0].doHide = false;
     },
     inp = $('<input type="text" placeholder="'+add_a.text()+'" />')
     .css({ border: 'none',  background: 'transparent', display: 'none'})
@@ -36,6 +55,10 @@
     .focus(function() {
       var $my = $(this);
       var $this = this;
+      
+      if ($this.doHide === true)
+      	keepInput();
+
       $(document).click(blur);
 
       if (!$this.popup) {
@@ -53,7 +76,7 @@
                              background: 'white',
                              boxShadow: '2px 2px 2px #999' })
 		      .focus(function() {
-			trace("Focus");
+			keepInput();
 		      });
 
 	$this.popup.insertAfter(inp);
@@ -61,13 +84,10 @@
     })
     // Keyup
     .keyup(function(e) {
-      if (e.keyCode == 27) { // escape
-      	blur();
+      // Skip if less than zero (0) and not backspace
+      if (e.keyCode < 48 && e.keyCode != 8) {
+      	clearInterval(this.iv);
       	return;
-      }
-      if (e.keyCode == 32) { // space
-	if (this.iv) clearInterval(this.iv);
-	return;
       }
 
       if (inp.val().length >= sml) {
@@ -82,10 +102,26 @@
       if (this.iv != undefined && this.iv > 0)
 	clearInterval(this.iv);
     })
+    .blur(function() {
+      this.doHide = true;
+      $this = this;
+      setTimeout(function() {
+	if ($this.doHide === true) {
+	  $this.doHide = false;
+	  blurNoFocus();
+	}
+      }, 100);
+    })
     // Hide the document click event
     .click(function(e) { e.stopPropagation(); }); // end input
 
-    my.prepend(inp);
+    my.prepend(inp).keyup(function(ev) {
+      // Esc, close the input and popup if existing
+      if (ev.keyCode == 27) {
+	blur();
+	return;
+      }
+    });
 
     add_a.click(function(e) {
       e.stopPropagation();
@@ -102,12 +138,16 @@
       $(element).remove();
     };
     this.populatePopup = function(a) {
-      var t = my.find('div.type-and-find-popup').empty();
+      var t = my.find('div.type-and-find-popup');
+      // To prevent the popup from flickering, if it's already open, if the 
+      // dataset is large we collect all current elements and remove them when
+      // the new elements have been added.
+      var oldelem = t.find('a');
       if (!a || !a.length) { t.hide(); return; }
 
       for (var i = 0; i < a.length; i++) {
 	var e = a[i];
-	if (storage.exists(e)) continue;
+	if (!config.duplicates && storage.exists(e)) continue;
 
 	var link = $('<a href="#">' + (e.display||'?') + '</a>')
 		   .attr('title', e.title||'')
@@ -126,22 +166,42 @@
 			              handler, this) !== false)
 			 {
 			   handler.remove(this);
+			   blur();
 			 }
 
 			 return false;
 		       })
-		       .focus(function() {})
+		       .focus(function(e) {
+			 e.stopPropagation();
+		       })
+		       .blur(function(e) {
+		       	  e.stopPropagation();
+		       	  inp.trigger('blur');
+		       })
 		       .insertBefore(inp);
 
+		       // Internet Exploder needs this!
 		       setTimeout(function() { add_a.trigger('click'); },1);
 		     }
 		     blur();
 		     return false;
+		   })
+		   .keyup(function(ev) {
+		     if (ev.keyCode == 46 || ev.keyCode == 8) 
+		       $(this).click();
+		   })
+		   .focus(function() {
+		     keepInput();
+		   })
+		   .blur(function() {
+		     inp.trigger('blur');
 		   });
 
 	$.data(link[0], 'data', a[i]);
 	t.append(link);
       }
+
+      oldelem.remove();
 
       t.show();
     };
@@ -152,6 +212,8 @@
     };
   };
 
+  // The storage class is where we keep added elements in an instance. This is
+  // to be able to prevent duplicates to be added.
   var Storage = function() {
     var list = [];
     this.getList = function() { return list; };
