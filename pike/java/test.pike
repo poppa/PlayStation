@@ -33,6 +33,10 @@ int main(int argc, array(string) argv)
 
   Kaffe.reflect(java);
   
+  //werror("%O\n", Kaffe.decode(java->getDate()));
+  
+  //return 0;
+  
   HR();
   
   java->dumpString("Hello from Pike");

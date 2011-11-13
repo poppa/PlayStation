@@ -1,0 +1,26 @@
+#wrapper {
+  width: 700px;
+  margin: 0 auto;
+  padding: 30px;
+  border: 1px solid #ccc;
+  }
+
+div.users {
+  padding: 5px;
+  border: 1px solid #ccc;
+  }
+div.users a, div.users input { margin: 1px 0; }
+div.users a.selected-item {
+  border-radius: 3px;
+  border: 1px solid #62A34F;
+  background: #64B44C;
+  color: #164209;
+  text-shadow: 1px 1px #88D073;
+  margin-right: 3px;
+  box-shadow: 2px 2px 4px #7DDC61 inset;
+  }
+div.users a.selected-item:focus {
+  border-color: #444;
+  color: #111;
+  outline: none;
+  }

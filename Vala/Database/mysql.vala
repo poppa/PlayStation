@@ -19,7 +19,6 @@
  * 	Pontus Östlund <pontus@poppa.se>
  */
 
-
 /**
  * Mysql wrapper
  */
@@ -42,13 +41,10 @@ public class Poppa.Sql.MySQL.Database : Poppa.Sql.Database
    * @param database
    */
   public Database(string host, string? username, string? password, 
-                  string dbname) throws Sql.Error
+                  string database) throws Poppa.Sql.Error
   {
-    this.db = new Mysql.Database();
-		if (this.db == null) 
-			new Poppa.Sql.Error.ANY("Unable to instantiate a Mysql.Database!");
-
-    if (!this.db.real_connect(host, username, password, dbname)) {
+    db = new Mysql.Database();
+    if (!db.real_connect(host, username, password, database, 0, null, 0)) {
       throw new Poppa.Sql.Error.ANY("Unable to connect to database: %s"
                                     .printf(db.error()));
 		}
@@ -60,7 +56,7 @@ public class Poppa.Sql.MySQL.Database : Poppa.Sql.Database
 	 * @param connection_string
 	 *  E.g mysql://user:pass@host/dbname
 	 */
-  public Database.from_string(string connection_string) throws Sql.Error
+  public Database.from_string(string connection_string) throws Poppa.Sql.Error
   {
     try {
       Regex re = new Regex("mysql://"             +
@@ -88,9 +84,7 @@ public class Poppa.Sql.MySQL.Database : Poppa.Sql.Database
 
 				if (dbname == null || dbname.length == 0)
 					throw new Poppa.Sql.Error.ANY("Missing required database name");
-
-				message("*** %s, %s, %s, %s", host, uname, pword, dbname);
-
+				
 				this(host, uname, pword, dbname);
 			}
 			else throw new Poppa.Sql.Error.ANY("Bad connection string!");
@@ -104,39 +98,34 @@ public class Poppa.Sql.MySQL.Database : Poppa.Sql.Database
    * Query the database
    *
    * @throws
-   *  An Sql.Error if the query fails.
+   *  A Poppa.Sql.Error if the query fails.
    *
    * @param query
-   * @param ...
-	 *  Variable length of Poppa.Sql.Param
+   * @param params
    */
-  public override Sql.Result? query(string query, ... )
+  public override Poppa.Sql.Result? query(string query,
+                                          Poppa.Sql.Param[]? params=null)
+    throws Poppa.Sql.Error
   {
-    string q;
-
-		var l = va_list();
-		Poppa.Sql.Param[] list = new Poppa.Sql.Param[]{};
-		
-		while (true)
-		{
-			Poppa.Sql.Param? p = l.arg();
-			
-			if (p == null)
-				break;
-
-			list += p;
-		}
-
-		q = base.replace_params(query, list);
+    string q = base.build_query(query, params);
 
     if (this.db.query(q) != 0)
-      throw new Sql.Error.ANY("MySQL query error: %s".printf(db.error()));
+      throw new Poppa.Sql.Error.ANY("MySQL query error: %s".printf(db.error()));
 
-    try { return new Sql.MySQL.Result(db); }
-    catch (Sql.Error e) {
+    try { return new Result(db); }
+    catch (Poppa.Sql.Error e) {
       return null;
     }
   }
+
+	/**
+	 * Returns the last inserted id
+	 */
+	public override ulong insert_id()
+	{
+		assert(db != null);
+		return db.insert_id();
+	}
 }
 
 /**
@@ -156,15 +145,15 @@ protected class Poppa.Sql.MySQL.Result : Poppa.Sql.Result
    *
    * @param result
    */
-  public Result(Mysql.Database db) throws Sql.Error
+  public Result(Mysql.Database db) throws Poppa.Sql.Error
   {
     if (db != null) {
       res = db.store_result();
       if (res == null)
-        throw new Sql.Error.ANY("No result");
+        throw new Poppa.Sql.Error.ANY("No result");
 
       num_fields = res.num_fields();
-      num_rows = res.num_rows();
+      num_rows = length = res.num_rows();
       unowned Mysql.Field[]? flds = res.fetch_fields();
 
       if (flds != null) {
@@ -187,7 +176,7 @@ protected class Poppa.Sql.MySQL.Result : Poppa.Sql.Result
     unowned string[]? row = null;
 
     if ((row = res.fetch_row()) != null) {
-      uint i = 0;
+      uint i;
       for (i = 0; i < num_fields; i++)
         ret += row[i].dup();
 
@@ -201,7 +190,7 @@ protected class Poppa.Sql.MySQL.Result : Poppa.Sql.Result
   /**
    * Fetch assoc row
    */
-  public override Sql.Row? fetch_assoc()
+  public override Poppa.Sql.Row? fetch_assoc()
   {
     unowned string[]? row = null;
 
@@ -212,9 +201,10 @@ protected class Poppa.Sql.MySQL.Result : Poppa.Sql.Result
         r += row[i].dup();
 
       counter++;
-      return new Row(keys, r);
+      return new Poppa.Sql.Row(keys, r);
     }
 
     return null;
   }
 }
+

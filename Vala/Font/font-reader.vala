@@ -21,7 +21,7 @@ namespace Poppa
 {
 	namespace Font
 	{
-	  errordomain Error {
+	  public errordomain Error {
 		  UNKNOWN_FONT,
 		  BAD_TYPE
 	  }

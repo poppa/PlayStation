@@ -1,4 +1,4 @@
-/* test.vala
+/* (filename).vala
  *
  * Copyright (C) 2010  Pontus Östlund
  *
@@ -19,32 +19,18 @@
  * 	Pontus Östlund <pontus@poppa.se>
  */
 
-using Poppa;
-
 int main(string[] args)
 {
-  try {
-    string dbstr = "mysql://root:w1yHjx@localhost/poppa_se";
-    Sql.Database db;
-    db = new Sql.MySQL.Database.from_string(dbstr);
+  string[] env = Environment.list_variables();
 
-    Sql.Result? res = db.query("SELECT * FROM wp_posts WHERE post_title=@pt", 
-                               { new Sql.Param.as_string("pt", "About me") });
-		
-    if (res != null && res.num_rows > 0) {
-      Sql.Row? row;
-      while ((row = res.fetch_assoc()) != null) {
-        if (res.last())
-          message("Last row....");
+  foreach (string e in env)
+    stdout.printf("Env: %s: %s\n", e, Environment.get_variable(e));
 
-        message("Row (%ld): %ld, %s", row.length, row.get_uint("ID"), 
-                                      row["post_title"]);
-      }
-    }
-  }
-  catch (Sql.Error e) {
-    message("Error: %s", e.message);
-  }
-    
+  stdout.printf("\n");
+  stdout.printf("User config dir:   %s\n", Environment.get_user_config_dir());
+  stdout.printf("User data dir:     %s\n", Environment.get_user_data_dir());
+  stdout.printf("User special dir:  %s\n", 
+                Environment.get_user_special_dir(UserDirectory.DOWNLOAD));
+
   return 0;
 }

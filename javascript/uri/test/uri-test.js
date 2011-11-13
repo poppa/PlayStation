@@ -10,6 +10,7 @@ $(document).ready(function()
   puts("<b>Example 1:</b> {0}\n", uri.toString());
 
   delete uri.variables.offset;
+  uri.variables.name = 'Poppa P';
 
   uri.path = '/blog/tags/roxen/';
   uri.fragment = 'content';

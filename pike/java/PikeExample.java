@@ -29,9 +29,12 @@
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Date;
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;
 
 /**
- * Class for testing the Java binding in Pike {@see http://pike.ida.liu.se}
+ * Class for testing the Java binding in Pike {@link http://pike.ida.liu.se}
  *
  * @author Pontus Östlund - www.poppa.se
  * @version 0.1
@@ -44,11 +47,15 @@ public class PikeExample
   public PikeExample() {}
 
   /**
-   * Antoher purpose less constructor
+   * Antoher purpose less constructor.
+   * Sets intField to num
    *
    * @param num
    */  
-  public PikeExample(int num) {}
+  public PikeExample(int num) 
+  {
+    intField = num;
+  }
 
   /**
    * Version string
@@ -202,6 +209,62 @@ public class PikeExample
   }
 
   /**
+   * Returns the current date and time
+   */
+  public Date getDate()
+  {
+    return new Date();
+  }
+  
+  /**
+   * Returns a Date object of the date/datetime <code>isoDate</code>.
+   * 
+   * @param isoDate
+   *  Can be <code>yyyy-mm-dd</code>, <code>yyyy-mm-dd hh:mm</code>,
+   *  <code>yyyy-mm-dd hh:mm:ss</code> or <code>yyyy-mm-dd hh:mm:ss tz</code>
+   */
+  public Date getDate(String isoDate)
+  {
+    return getDate(isoDate, "Europe/Stockholm");
+  }
+  
+  /** 
+   * Returns a Date object of the date/datetime <code>isoDate</code>.
+   * 
+   * @param isoDate
+   *  Can be <code>yyyy-mm-dd</code>, <code>yyyy-mm-dd hh:mm</code>,
+   *  <code>yyyy-mm-dd hh:mm:ss</code> or <code>yyyy-mm-dd hh:mm:ss tz</code>
+   * @param timezone
+   *  Like Europe/Stockholm, Australia/Melbourne, GMT+2 e t c.
+   */
+  public Date getDate(String isoDate, String timezone)
+  {
+    String sfmt = "yyyy-MM-dd";
+    
+    // Ok, this is an ugly hack ;)
+    String[] parts = isoDate.split(":");
+    if (parts.length == 2)
+      sfmt += " HH:mm";
+    else if (parts.length == 3)
+      sfmt += " HH:mm:ss";
+
+    if (isoDate.indexOf("+") > -1)
+      sfmt += " Z";
+    
+    SimpleDateFormat fmt = new SimpleDateFormat(sfmt);
+    fmt.setTimeZone(TimeZone.getTimeZone(timezone));
+
+    try {
+      return fmt.parse(isoDate);
+    }
+    catch (Exception e) {
+      System.err.printf("Date parse error: %s\n", e.getMessage());
+    }
+    
+    return null;
+  }
+  
+  /**
    * Dumps a String to stdout
    * @param s
    */
@@ -289,5 +352,14 @@ public class PikeExample
   public void dumpHashtable(Hashtable ht)
   {
     System.out.printf("Got Hashtable: %s\n", ht);
+  }
+  
+  /**
+   * Dumps a date object to stdout
+   * @param date
+   */
+  public void dumpDate(Date date)
+  {
+    System.out.printf("%s\n", date);
   }
 }

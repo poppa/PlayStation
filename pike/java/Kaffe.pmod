@@ -125,6 +125,8 @@ object encode(mixed pike) // {{{
 //!   java.lang.Double
 //!  @item
 //!   java.lang.Boolean
+//!  @item
+//!   java.util.Date
 //! @endul
 //!
 //! @param jobj
@@ -169,6 +171,16 @@ mixed decode(mixed jobj) // {{{
     case "java.lang.Boolean":
       return jobj->booleanValue();
 
+    case "java.util.Date":
+      string f = sprintf("%d-%d-%d %d:%d:%d", 
+                         jobj->getYear()+1900,
+                         jobj->getMonth()+1,
+                         jobj->getDate(),
+                         jobj->getHours(),
+                         jobj->getMinutes(),
+                         jobj->getSeconds());
+      return Calendar.parse("%Y-%M-%D %h:%m:%s", f);
+      
     default:
       error("Unhandled Java type: %O\n", type);
   }
@@ -180,27 +192,69 @@ mixed decode(mixed jobj) // {{{
 //!
 //! @param instance
 //!  The Java object to reflect
-void reflect(object instance) // {{{
+//! @param _glob
+//!  Search for constructors, fields and methods matching the glob @[_glob]
+//! @param _return
+//!  If @tt{1@} the values will be returned rather than printed to stdout
+//! @returns
+//!  if @[_return] is @tt{1@} a mapping will be returned.
+//!  @mapping
+//!   @member array "constructors"
+//!    A list of constructors
+//!   @member array "fields"
+//!    A list of object/class fields
+//!   @member array "methods"
+//!    A list of object/class methods
+//!  @endmapping
+void|mapping reflect(object instance, void|string _glob, 
+                     void|int(0..1) _return) // {{{
 {
   if (sprintf("%O", object_program(instance)) != "Java.jobject") {
     werror("%O is not a Java.jobject object!\n", instance);
     return;
   }
 
+  mapping(string:array(string)) retval = ([
+    "constructors" : ({}),
+    "fields" : ({}),
+    "methods" : ({})
+  ]);
+
   object klass = instance->getClass();
-  //object obj_klass = Java.pkg[(string)klass->getName()];
+  
+  foreach (values(klass->getConstructors()), object o) {
+    string name = (string)o->toGenericString();
+    if (!_glob || glob(_glob, name))
+      retval->constructors += ({ name });
+  }
 
-  write("\nReflect Java class %O\n", (string)klass->getName());
+  foreach (values(klass->getFields()), object o) {
+    string name = (string)o->toGenericString();
+    if (!_glob || glob(_glob, name))
+      retval->fields += ({ name });
+  }
 
-  write("\nConstructors:\n");
-  foreach (values(klass->getConstructors()), object o)
-    write("  * %s\n", (string)o->toGenericString());
+  foreach (values(klass->getMethods()), object o) {
+    string name = (string)o->toGenericString();
+    
+    if (!_glob || glob(_glob, name))
+      retval->methods += ({ name });
+  }
 
-  write("\nFields:\n");
-  foreach (values(klass->getFields()), object o)
-    write("  * %s\n", (string)o->toGenericString());
-
-  write("\nMethods:\n");
-  foreach (values(klass->getMethods()), object o)
-    write("  * %s\n", (string)o->toGenericString());
+  if (!_return) {
+    write("\nReflect Java class %O\n\n", (string)klass->getName());
+    write("Constructors (%d)\n", sizeof(retval->constructors));
+    foreach (retval->constructors, string s)
+      write("  * %s\n", s);
+    
+    write("\nFields (%d)\n", sizeof(retval->fields));
+    foreach (retval->fields, string s)
+      write("  * %s\n", s);
+    
+    write("\nMethods (%d)\n", sizeof(retval->methods));
+    foreach (retval->methods, string s)
+      write("  * %s\n", s);
+  }
+  else
+    return retval;
 } // }}}

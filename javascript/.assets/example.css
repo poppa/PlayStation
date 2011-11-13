@@ -1,0 +1,12 @@
+body { font: 80%/140% arial, sans-serif; }
+pre { font-size: 11px; line-height: 130%; font-family: liberation mono, monospace; }
+ol li { font: 12px/100% monospace; }
+#console pre, .console pre { color: #223450; font-size: 12px; }
+code { }
+code.hilite {
+  line-height: 1.3em;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  display: block;
+  white-space: normal;
+  }

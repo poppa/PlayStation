@@ -1,4 +1,4 @@
-/* test.vala
+/* (filename).vala
  *
  * Copyright (C) 2010  Pontus Östlund
  *
@@ -19,32 +19,9 @@
  * 	Pontus Östlund <pontus@poppa.se>
  */
 
-using Poppa;
-
 int main(string[] args)
 {
-  try {
-    string dbstr = "mysql://root:w1yHjx@localhost/poppa_se";
-    Sql.Database db;
-    db = new Sql.MySQL.Database.from_string(dbstr);
-
-    Sql.Result? res = db.query("SELECT * FROM wp_posts WHERE post_title=@pt", 
-                               { new Sql.Param.as_string("pt", "About me") });
-		
-    if (res != null && res.num_rows > 0) {
-      Sql.Row? row;
-      while ((row = res.fetch_assoc()) != null) {
-        if (res.last())
-          message("Last row....");
-
-        message("Row (%ld): %ld, %s", row.length, row.get_uint("ID"), 
-                                      row["post_title"]);
-      }
-    }
-  }
-  catch (Sql.Error e) {
-    message("Error: %s", e.message);
-  }
-    
+  g_print("OK\n");
+  
   return 0;
 }

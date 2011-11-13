@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test 1</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <script src="../.assets/jquery-1.4.2.min.js" type="text/javascript"></script>
+    <script src="../.assets/global-dev.js" type="text/javascript"></script>
+    <script src="jquery.type-and-add.js" type="text/javascript"></script>
+    <script src="local.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="../.assets/example.css" />
+    <link rel="stylesheet" type="text/css" href="local.css" />
+  </head>
+  <body>
+    <div id="wrapper">      
+       
+	<div class="users" id="users-1">
+	  <a href="#" class="add-element"><span>+ Add user</span></a>
+	</div>
+	<script type="text/javascript" class="capture">
+	  var users = $('#users-1');
+	  var query = users.indexOf('?') > 1;
+	</script>
+      <code class='hilite'><span style='color:#729ECE'>&lt;div</span> <span style='color:#02838b'>id</span>=<span style='color:#070'>"users-1"</span> <span style='color:#02838b'>class</span>=<span style='color:#070'>"users"</span><span style='color:#729ECE'>&gt;</span>&#160;<br/>
+&#160;&#160;<span style='color:#729ECE'>&lt;a</span> <span style='color:#02838b'>class</span>=<span style='color:#070'>"add-element"</span> <span style='color:#02838b'>href</span>=<span style='color:#070'>"#"</span><span style='color:#729ECE'>&gt;</span><span style='color:#729ECE'>&lt;span</span><span style='color:#729ECE'>&gt;</span>+&#160;Add&#160;user<span style='color:#729ECE'>&lt;/span</span><span style='color:#729ECE'>&gt;</span><span style='color:#729ECE'>&lt;/a</span><span style='color:#729ECE'>&gt;</span>&#160;<br/>
+<span style='color:#729ECE'>&lt;/div</span><span style='color:#729ECE'>&gt;</span>&#160;<br/>
+<span style='color:#729ECE'>&#60;script</span> <span style='color:#02838b'>class</span>=<span style='color:#070'>"capture"</span> <span style='color:#02838b'>type</span>=<span style='color:#070'>"text/javascript"</span><span style='color:#729ECE'>&#62;</span>&#160;&#160;&#160;<br/>
+&#160;&#160;<span style='color:#006'><b>var</b></span>&#160;users&#160;<span style='color:#00C'>=</span>&#160;$<span style='color:#00C'>(</span><span style='color:#070'>&#39;#users-1&#39;</span><span style='color:#00C'>)</span><span style='color:#00C'>;</span>&#160;&#160;&#160;<br/>
+&#160;&#160;<span style='color:#006'><b>var</b></span>&#160;query&#160;<span style='color:#00C'>=</span>&#160;users<span style='color:#00C'>.</span><span style='color:#C00'>indexOf</span><span style='color:#00C'>(</span><span style='color:#070'>&#39;?&#39;</span><span style='color:#00C'>)</span>&#160;<span style='color:#00C'>&#62;</span>&#160;<span style='color:purple'>1</span><span style='color:#00C'>;</span>&#160;&#160;&#160;<br/>
+<span style='color:#729ECE'>&#60;/script&#62;</span>&#160;<br/>
+</code>
+      <br/>
+      
+	<div class="users">
+	  <a href="#" class="add-element">+ Add other user</a>
+	</div>
+      <code class='hilite'><span style='color:#729ECE'>&lt;div</span> <span style='color:#02838b'>class</span>=<span style='color:#070'>"users"</span><span style='color:#729ECE'>&gt;</span>&#160;<br/>
+&#160;&#160;<span style='color:#729ECE'>&lt;a</span> <span style='color:#02838b'>class</span>=<span style='color:#070'>"add-element"</span> <span style='color:#02838b'>href</span>=<span style='color:#070'>"#"</span><span style='color:#729ECE'>&gt;</span>+&#160;Add&#160;other&#160;user<span style='color:#729ECE'>&lt;/a</span><span style='color:#729ECE'>&gt;</span>&#160;<br/>
+<span style='color:#729ECE'>&lt;/div</span><span style='color:#729ECE'>&gt;</span>&#160;<br/>
+</code>
+    </div>
+  </body>
+</html>

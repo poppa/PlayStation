@@ -1,20 +1,42 @@
 #!/usr/bin/env pike
 
-#define USAGE sprintf("Usage: %s html-file", argv[0])
+import Public.Poppa.Options;
 
 private array(string) code_container = ({});
 private Syntaxer.Hilite highlighter;
+private string base = dirname(__FILE__);
+private string cwd  = getcwd();
+private mapping(string:Syntaxer.Hilite) hiliters  = ([]);
+
+#define TRIM(S) String.trim_all_whites((S))
 
 int main(int argc, array(string) argv)
 {
-  string file;
-  
-  if (argc < 2) {
-    werror("Missing required arguments!\n%s\n", USAGE);
-    return 1;
+  Context opts = Context("file.html", 1);
+
+  opts->add_argument(({
+    ({ "init",  "i", OPTIONAL_ARG, TYPE_NONE, "Initialize a new module" }),
+    ({ "regen", "r", OPTIONAL_ARG, TYPE_NONE, "Regenerate module" })
+  }));
+
+  if (mixed e = catch (opts->parse(argv))) {
+    werror("%s\n", describe_error(e));
+    opts->usage();
   }
 
-  file = argv[1];
+  argv -= ({ 0 });
+
+  if (sizeof(argv) < 2) {
+    werror("Missing required arguments!\n\n%s\n", opts->usage(1));
+    return 1;
+  }
+  
+  string file = argv[1];
+
+  if ( opts["init"] ) {
+    werror("INIT\n");
+    return 0;
+  }
 
   if (!Stdio.exist(file)) {
     werror("Input file %O doesn't exist!\n", file);
@@ -31,6 +53,7 @@ int main(int argc, array(string) argv)
 
   Parser.HTML parser = Parser.HTML();
 
+  /*
   parser->add_container("script",
     lambda (Parser.HTML p, mapping attr, string content) {
       if (attr->src && !has_prefix(attr->src, "http://") && 
@@ -43,7 +66,62 @@ int main(int argc, array(string) argv)
       return ({});
     }
   );
+  */
 
+  parser->add_container("code", 
+    lambda (Parser.HTML p, mapping attr, string content) {
+      array(string) lines = (content-"\r")/"\n";
+
+      if (!attr->lang) {
+      	add(content);
+      	return 0;
+      }
+      
+      if (sizeof(lines) > 1) {
+      	sscanf (lines[1], "%[ \t]%*s", string prefix);
+	if (prefix && sizeof(prefix)) {      	
+	  Regexp.SimpleRegexp re = Regexp.SimpleRegexp("^" + prefix);
+
+	  for (int i; i < sizeof(lines); i++)
+	    lines[i] = re->replace(lines[i], "");
+  
+	  if (TRIM( lines[0] ) == "")
+	    lines = lines[1..];
+	  
+	  if (TRIM( lines[-1] ) == "")
+	    lines = lines[..sizeof(lines)-2];
+
+	  content = lines*"\n";
+	}
+      }
+
+      Syntaxer.Hilite hl = Syntaxer.Hilite(attr->lang);
+      hl->line_wrap = ({ "", "<br/>\n" });
+
+      if (hl) content = hl->parse(content);
+      
+      m_delete(attr, "lang");
+      m_delete(attr, "detab");
+      
+      if ( attr["class"] ) 
+	attr["class"] += " hilite";
+      else
+      	attr["class"] = "hilite";
+
+      add(mk_container("code", attr, content));
+      
+      return 0;
+    }
+  );
+  
+  parser->add_container("example",
+    lambda (Parser.HTML, mapping attr, string content) {
+      string extra = "<code class='hilite'>" + hilite(content, "html") + "</code>";
+      return content + extra;
+    }
+  );
+
+  /*
   int(0..1) add_content = 1;
   int captures = 0;
 
@@ -76,10 +154,11 @@ int main(int argc, array(string) argv)
 	add(content);
     }
   );
+  */
 
   mixed e = catch {
-    parser->feed(Stdio.read_file(file), 1)->finish()->read();
-    Stdio.write_file(file, buf->get());
+    string s = parser->feed(Stdio.read_file(file), 1)->finish()->read();
+    Stdio.write_file("_" + file, s);
   };
   
   if (e) {
@@ -87,7 +166,6 @@ int main(int argc, array(string) argv)
     return 1;
   }
 
-  write("Wrote %s\n", file);
 
   return 0;
 }
@@ -115,4 +193,52 @@ private void parse_script(string path)
   );
 
   parser->feed(Stdio.read_file(path))->finish();
+}
+
+string hilite(string s, string lang)
+{
+  Syntaxer.Hilite hl = Syntaxer.get_parser(lang);
+  hl->line_wrap = ({ "", "<br/>\n" });
+
+  if (hl) s = hl->parse(detab(s));
+
+  return s;
+}
+
+string detab(string s)
+{
+  if (!s) return "";
+  
+  array(string) lines = (s-"\r")/"\n";
+  
+  if (sizeof(lines) > 1) {
+    sscanf (lines[1], "%[ \t]%*s", string prefix);
+    if (prefix && sizeof(prefix)) {      	
+      Regexp.SimpleRegexp re = Regexp.SimpleRegexp("^" + prefix);
+
+      for (int i; i < sizeof(lines); i++)
+	lines[i] = re->replace(lines[i], "");
+
+      if (TRIM( lines[0] ) == "")
+	lines = lines[1..];
+      
+      if (TRIM( lines[-1] ) == "")
+	lines = lines[..sizeof(lines)-2];
+
+      s = lines*"\n";
+    }
+  }
+
+  return s;
+}
+
+string mk_container(string name, mapping attr, string content)
+{
+  return sprintf("<%s%s>%s</%[0]s>", name, mk_attr(attr), content);
+}
+
+string mk_attr(mapping attr) 
+{
+  if (!sizeof(attr)) return "";
+  return sprintf(" %{%s='%s'%}", (array)attr);
 }
