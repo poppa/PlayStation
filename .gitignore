@@ -1,5 +1,7 @@
 .deps
-*.[doac]
+*.[doa]
+Vala/*/*.c
+Vala/*/*/*.c
 *~
 *.stamp
 *.gmo
