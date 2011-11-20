@@ -1,3 +1,4 @@
+/* -*- Mode: Vala; indent-tabs-mode: t; c-basic-offset: 2; tab-width: 2 -*- */
 /* keyfile.vala
  *
  * Copyright (C) 2010  Pontus Östlund
@@ -20,9 +21,9 @@
  */
 
 /**
- * Class for creating and reading key files:
+ * Class for creating and reading key files
  *
- * {{{
+ * <code>
  * [application]
  * name=My app
  * dir=/home/poppa/.my-app
@@ -30,12 +31,13 @@
  * [window]
  * width=500
  * height=300
- * }}}
+ * </code>
  */
 public class Poppa.KeyFile : Object
 {
 	GLib.List<Index> sections;
 	string path;
+
 	/**
 	 * Delimiter to use for lists. Default is `;`
 	 */
@@ -48,20 +50,21 @@ public class Poppa.KeyFile : Object
 	 * @param path
 	 *  Path to the key file
 	 */
-	public KeyFile(string path)
+	public KeyFile (string path)
 	{
-		sections = new GLib.List<Index>();
+		sections = new GLib.List<Index> ();
 		this.path = path;
-		File file = File.new_for_path(path);
-		if (FileUtils.test(path, FileTest.EXISTS))
-			parse();
+		File file = File.new_for_path (path);
+
+		if (FileUtils.test (path, FileTest.EXISTS))
+			parse ();
 		else {
 			try {
-				var fs = file.create_readwrite(FileCreateFlags.NONE, null);
-				fs.close(null);
+				var fs = file.create_readwrite (FileCreateFlags.NONE, null);
+				fs.close (null);
 			}
 			catch (GLib.Error e) {
-				warning("Unable to create file \"%s\"!", path);
+				warning ("Unable to create file \"%s\"!", path);
 			}
 		}
 	}
@@ -76,15 +79,15 @@ public class Poppa.KeyFile : Object
 	 * @param val
 	 *  The value
 	 */
-	public void set_string(string index, string key, string val)
+	public void set_string (string index, string key, string val)
 	{
-		Index idx = get_index(index);
+		Index idx = get_index (index);
 		if (idx == null) {
-			idx = new Index(index);
-			sections.append(idx);
+			idx = new Index (index);
+			sections.append (idx);
 		}
 
-		idx.set_value(key, val);
+		idx.set_value (key, val);
 	}
 
 	/**
@@ -97,15 +100,15 @@ public class Poppa.KeyFile : Object
 	 * @param val
 	 *  The value
 	 */
-	public void set_integer(string index, string key, int val)
+	public void set_integer (string index, string key, int val)
 	{
-		Index idx = get_index(index);
+		Index idx = get_index (index);
 		if (idx == null) {
-			idx = new Index(index);
-			sections.append(idx);
+			idx = new Index (index);
+			sections.append (idx);
 		}
 
-		idx.set_value(key, val.to_string());
+		idx.set_value (key, val.to_string ());
 	}
 	
 	/**
@@ -118,15 +121,15 @@ public class Poppa.KeyFile : Object
 	 * @param val
 	 *  The value
 	 */
-	public void set_double(string index, string key, double val)
+	public void set_double (string index, string key, double val)
 	{
-		Index idx = get_index(index);
+		Index idx = get_index (index);
 		if (idx == null) {
-			idx = new Index(index);
-			sections.append(idx);
+			idx = new Index (index);
+			sections.append (idx);
 		}
 
-		idx.set_value(key, val.to_string());
+		idx.set_value (key, val.to_string ());
 	}
 	
 	/**
@@ -139,15 +142,15 @@ public class Poppa.KeyFile : Object
 	 * @param val
 	 *  The value
 	 */
-	public void set_boolean(string index, string key, bool val)
+	public void set_boolean (string index, string key, bool val)
 	{
-		Index idx = get_index(index);
+		Index idx = get_index (index);
 		if (idx == null) {
-			idx = new Index(index);
-			sections.append(idx);
+			idx = new Index (index);
+			sections.append (idx);
 		}
 
-		idx.set_value(key, val ? "true" : "false");
+		idx.set_value (key, val ? "true" : "false");
 	}
 	
 	/**
@@ -160,13 +163,17 @@ public class Poppa.KeyFile : Object
 	 * @param val
 	 *  The value
 	 */
-	public void set_string_list(string index, string key, string[] val)
+	public void set_string_list (string index, string key, string[] val)
 	{
-		Index idx = get_index(index);
+		Index idx = get_index (index);
 		if (idx == null) {
-			idx = new Index(index);
-			sections.append(idx);
+			idx = new Index (index);
+			sections.append (idx);
 		}
+
+#if DEBUG
+		message ("String list delimiter is: %s\n", delimiter);
+#endif
 
 		int len = val.length;
 		string s = "";
@@ -176,7 +183,7 @@ public class Poppa.KeyFile : Object
 				s += delimiter;
 		}
 
-		idx.set_value(key, s);
+		idx.set_value (key, s);
 	}
 	
 	/**
@@ -189,23 +196,23 @@ public class Poppa.KeyFile : Object
 	 * @param val
 	 *  The value
 	 */
-	public void set_integer_list(string index, string key, int[] val)
+	public void set_integer_list (string index, string key, int[] val)
 	{
-		Index idx = get_index(index);
+		Index idx = get_index (index);
 		if (idx == null) {
-			idx = new Index(index);
-			sections.append(idx);
+			idx = new Index (index);
+			sections.append (idx);
 		}
 
 		int len = val.length;
 		string s = "";
 		for (uint i = 0; i < len; i++) {
-			s += val[i].to_string();
+			s += val[i].to_string ();
 			if (i+1 < len)
 				s += delimiter;
 		}
 
-		idx.set_value(key, s);
+		idx.set_value (key, s);
 	}
 	
 	/**
@@ -218,23 +225,23 @@ public class Poppa.KeyFile : Object
 	 * @param val
 	 *  The value
 	 */
-	public void set_double_list(string index, string key, double[] val)
+	public void set_double_list (string index, string key, double[] val)
 	{
-		Index idx = get_index(index);
+		Index idx = get_index (index);
 		if (idx == null) {
-			idx = new Index(index);
-			sections.append(idx);
+			idx = new Index (index);
+			sections.append (idx);
 		}
 
 		int len = val.length;
 		string s = "";
 		for (uint i = 0; i < len; i++) {
-			s += val[i].to_string();
+			s += val[i].to_string ();
 			if (i+1 < len)
 				s += delimiter;
 		}
 
-		idx.set_value(key, s);
+		idx.set_value (key, s);
 	}
 
 	/**
@@ -248,9 +255,9 @@ public class Poppa.KeyFile : Object
 	 * @return
 	 *  Returns `null` if the value isn't found
 	 */
-	public string? get_string(string index, string key)
+	public string? get_string (string index, string key)
 	{
-		Index.Value v = get_value(index, key);
+		Index.Value v = get_value (index, key);
 		return v == null ? null : v.val;
 	}
 
@@ -265,10 +272,10 @@ public class Poppa.KeyFile : Object
 	 * @return
 	 *  Returns `null` if the value isn't found
 	 */
-	public int get_integer(string index, string key)
+	public int get_integer (string index, string key)
 	{
-		Index.Value v = get_value(index, key);
-		return v == null ? 0 : v.val.to_int();
+		Index.Value v = get_value (index, key);
+		return v == null ? 0 : int.parse (v.val);
 	}
 
 	/**
@@ -282,10 +289,10 @@ public class Poppa.KeyFile : Object
 	 * @return
 	 *  Returns `null` if the value isn't found
 	 */
-	public double get_double(string index, string key)
+	public double get_double (string index, string key)
 	{
-		Index.Value v = get_value(index, key);
-		return v == null ? 0 : v.val.to_double();
+		Index.Value v = get_value (index, key);
+		return v == null ? 0 : double.parse (v.val);
 	}
 	
 	/**
@@ -299,9 +306,9 @@ public class Poppa.KeyFile : Object
 	 * @return
 	 *  Returns `null` if the value isn't found
 	 */
-	public bool get_boolean(string index, string key)
+	public bool get_boolean (string index, string key)
 	{
-		Index.Value v = get_value(index, key);
+		Index.Value v = get_value (index, key);
 		return v == null ? false : v.val == "true";
 	}
 	
@@ -316,11 +323,11 @@ public class Poppa.KeyFile : Object
 	 * @return
 	 *  Returns `null` if the value isn't found
 	 */
-	public string[]? get_string_list(string index, string key)
+	public string[]? get_string_list (string index, string key)
 	{
-		Index.Value v = get_value(index, key);
+		Index.Value v = get_value (index, key);
 		if (v != null)
-			return v.val == null ? null : v.val.split(delimiter);
+			return v.val == null ? null : v.val.split (delimiter);
 		
 		return null;
 	}
@@ -336,14 +343,14 @@ public class Poppa.KeyFile : Object
 	 * @return
 	 *  Returns `null` if the value isn't found
 	 */
-	public int[]? get_integer_list(string index, string key)
+	public int[]? get_integer_list (string index, string key)
 	{
-		Index.Value v = get_value(index, key);
+		Index.Value v = get_value (index, key);
 		if (v != null) {
 			int[] r = new int[]{};
-			string[] s = v.val.split(delimiter);
+			string[] s = v.val.split (delimiter);
 			for (uint i = 0; i < s.length; i++)
-				r += s[i].to_int();
+				r += int.parse (s[i]);
 				
 			return r;
 		}
@@ -362,34 +369,36 @@ public class Poppa.KeyFile : Object
 	 * @return
 	 *  Returns `null` if the value isn't found
 	 */
-	public double[]? get_double_list(string index, string key)
+	public double[]? get_double_list (string index, string key)
 	{
-		Index.Value v = get_value(index, key);
+		Index.Value v = get_value (index, key);
 		if (v != null) {
 			double[] r = new double[]{};
-			string[] s = v.val.split(delimiter);
+			string[] s = v.val.split (delimiter);
 			for (uint i = 0; i < s.length; i++)
-				r += s[i].to_double();
+				r += double.parse (s[i]);
 				
 			return r;
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Saves the values to the file
 	 */
-	public bool save()
+	public bool save ()
 	{
 		try {
-			var file = File.new_for_path(path);
-			var fs = new DataOutputStream(file.open_readwrite(null).output_stream);
-			fs.put_string(to_string(), null);
-			fs.close(null);
+      var fs = File.new_for_path (path).open_readwrite (null);
+      fs.truncate_fn (0, null);
+      var ds = new DataOutputStream (fs.output_stream);
+      ds.put_string (to_string (), null);
+      ds.close ();
+      fs.close ();
 		}
 		catch (GLib.Error e) {
-			warning("Failed saving file: %s", e.message);
+			warning ("Failed saving file: %s", e.message);
 			return false;
 		}
 
@@ -399,23 +408,25 @@ public class Poppa.KeyFile : Object
 	/**
 	 * Turns the values into a string represenation
 	 */
-	public string to_string()
+	public string to_string ()
 	{
 		string s = "";
-		foreach (Index i in sections)
-			s += i.to_string() + "\n";
+		foreach (Index i in sections) 
+ 			s += i.to_string () + "\n";
 
-		return s.strip();
+		return s.strip ();
 	}
-	
+
+
+
 	/**
 	 * Returns the value object or null if it's not found
 	 */
-	private Index.Value? get_value(string index, string key)
+	private Index.Value? get_value (string index, string key)
 	{
-		Index i = get_index(index);
+		Index i = get_index (index);
 		if (i != null)
-			return i.get_value(key);
+			return i.get_value (key);
 		
 		return null;	
 	}
@@ -423,7 +434,7 @@ public class Poppa.KeyFile : Object
 	/**
 	 * Returns the Index object with name `key`
 	 */
-	private Index? get_index(string key)
+	private Index? get_index (string key)
 	{
 		foreach (Index idx in sections)
 			if (idx.name == key)
@@ -435,36 +446,36 @@ public class Poppa.KeyFile : Object
 	/**
 	 * Parses the key file
 	 */
-	private void parse()
+	private void parse ()
 	{
-		File f = File.new_for_path(path);
+		File f = File.new_for_path (path);
 		try {
-			string data;
-			if (f.load_contents(null, out data, null, null)) {
-				string[] lines = data.split("\n");
+			uint8[] data;
+			if (f.load_contents (null, out data)) {
+				string[] lines = ((string) data).split ("\n");
 				Index idx = null;
 				foreach (string line in lines) {
-					line = line.strip();
+					line = line.strip ();
 					if (line.length == 0 || line[0] == ';')
 						continue;
 
 					string tmp = "";
-					if (line.scanf("[%[^]]s]\n", tmp) == 1) {
-						idx = new Index(tmp);
-						sections.append(idx);
+					if (line.scanf ("[%[^]]s]\n", tmp) == 1) {
+						idx = new Index (tmp);
+						sections.append (idx);
 						continue;
 					}
 
 					if (idx == null)
 						continue;
 
-					string[] pts = line.split("=", 2);
-					idx.set_value(pts[0], pts[1]);
+					string[] pts = line.split ("=", 2);
+					idx.set_value (pts[0], pts[1]);
 				}
 			}
 		}
 		catch (GLib.Error e) {
-			warning("Failed parsing file: %s", e.message);
+			warning ("Failed parsing file: %s", e.message);
 		}
 	}
 
@@ -476,18 +487,18 @@ public class Poppa.KeyFile : Object
 		public string name { get; set; } 
 		GLib.List<Value> values;
 
-		public Index(string name)
+		public Index (string name)
 		{
 			this.name = name;
-			values = new GLib.List<Value>();
+			values = new GLib.List<Value> ();
 		}
 
-		public void set_value(string k, string v)
+		public void set_value (string k, string? v)
 		{
-			Value val = get_value(k);
+			Value val = get_value (k);
 			if (val == null) {
-				val = new Value(k, v);
-				values.append(val);
+				val = new Value (k, v);
+				values.append (val);
 			}
 			else {
 				val.key = k;
@@ -495,16 +506,16 @@ public class Poppa.KeyFile : Object
 			}
 		}
 		
-		public string to_string()
+		public string to_string ()
 		{
 			string s = "[" + name + "]\n";
 			foreach (Value v in values)
-				s += v.to_string() + "\n";
+				s += v.to_string () + "\n";
 				
 			return s;
 		}
 		
-		public Value? get_value(string k)
+		public Value? get_value (string k)
 		{
 			foreach (Value v in values)
 				if (v.key == k)
@@ -519,17 +530,17 @@ public class Poppa.KeyFile : Object
 		internal class Value
 		{
 			public string key;
-			public string val;
+			public string? val;
 
-			public Value(string k, string v)
+			public Value (string k, string? v)
 			{
 				key = k;
 				val = v;
 			}
 
-			public string to_string()
+			public string to_string ()
 			{
-				return key + "=" + val;
+				return key + "=" + (val == null ? "" : val);
 			}
 		}
 	}

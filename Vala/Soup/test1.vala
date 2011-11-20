@@ -23,15 +23,15 @@ using Soup;
 
 int main(string[] args)
 {
-	
-  // format the URL to use the username as the filename
-  //string url = "http://twitter.com/users/%s.xml".printf (username);
-	string url = "http://inet.tvdomain.local/document-categories.xml";
+	string url = "http://inet.tvdomain.local/om-oss/press/bilder-och-logotyper" +
+	             "/ledningsgrupp/anders-moritz/Anders_Moritz_neutral_110530.tif";
 
-  // create an HTTP session to twitter
   var session = new Soup.SessionSync ();
   var message = new Soup.Message ("GET", url);
-  message.request_headers.append ("cookie", "RoxenACauth=Mjpxbzlqc2xVeGVvaUdJSXhMYmhCTmx0ejY=; RoxenALparams=\"tmtlMOEGA2JyX21vZGVmTqZzYgYDdHZhYnd3d6Z3YSY=\"");
+  message.request_headers.append ("cookie", "RoxenACauth=Mjpxbzlqc2xVeGVvaUd" +
+                                            "JSXhMYmhCTmx0ejY=; " +
+                                            "RoxenALparams=\"tmtlMOEGA2JyX21" +
+                                            "vZGVmTqZzYgYDdHZhYnd3d6Z3YSY=\"");
 	message.request_headers.append ("translate", "f");
 
 	session.queue_message(message, on_message_data);
@@ -47,11 +47,32 @@ int main(string[] args)
 void on_message_data (Soup.Session sess, Soup.Message mess)
 {
 	if (mess.status_code == Soup.KnownStatusCode.OK) {
-		string m = (string)  mess.response_body.data;
-		print("Got message: %s\n", m == null ? "NULL" : m);
+		print ("# Got data!\n");
+
+		var f = File.new_for_path ("pic.tif");
+
+		if (f.query_exists (null)) {
+			try {
+				var s = f.open_readwrite (null);
+				s.truncate_fn (0, null);
+				s.output_stream.write (mess.response_body.data, null);
+			}
+			catch (GLib.Error e) {
+				warning ("Unable to write to file: %s", e.message);
+			}
+		}
+		else {
+			try {
+				var s = f.create_readwrite (FileCreateFlags.NONE);
+				s.output_stream.write (mess.response_body.data, null);
+			}
+			catch (GLib.Error e) {
+				warning ("Unable to create file: %s", e.message);
+			}
+		}
 	}
 	else {
-		print("Bad status code (%ld) in response\n", mess.status_code);
+		warning ("Bad status code (%ld) in response\n", mess.status_code);
 	}
 }
 
