@@ -21,7 +21,7 @@
 
 using Gtk;
 
-class Test.Main 
+class Test.Main
 {
 	/**
 	 * Program entry point
@@ -38,7 +38,7 @@ class Test.Main
 	/**
 	 * Column order in the treeview
 	 */
-	enum TreeViewCols 
+	enum TreeViewCols
 	{
 		ICON,
 		APP_NAME,
@@ -55,7 +55,7 @@ class Test.Main
 	 * Counter keeping track of inserted CellRenderers
 	 */
 	int pos = 0;
-	
+
 	/**
 	 * The data model of the treeview
 	 */
@@ -70,10 +70,8 @@ class Test.Main
 	int run (string[] args)
 	{
 		Builder builder = new Builder ();
-	
-		try {
-			builder.add_from_file ("treeview.ui"); 
-		}
+
+		try { builder.add_from_file ("treeview.ui"); }
 		catch (GLib.Error e) {
 			error ("Error: %s", e.message);
 		}
@@ -87,39 +85,70 @@ class Test.Main
 		//   First column is the application icon
 		//   Second column is the application name
 		//   Third column is the commandline for starting the application
-		ls = new ListStore (TreeViewCols.N_COLS, 
-			                  typeof (Gdk.Pixbuf), 
+		ls = new ListStore (TreeViewCols.N_COLS,
+			                  typeof (Gdk.Pixbuf),
 			                  typeof (string),
 			                  typeof (string));
 
-		ls.set_sort_column_id (TreeViewCols.APP_NAME, SortType.ASCENDING);
-
+    //ls.set_sort_column_id (TreeViewCols.APP_NAME, SortType.ASCENDING);
 		tv.set_model (ls);
 
 		tv.insert_column (get_column ("Application", true), -1);
 		tv.insert_column (get_column ("Command"), -1);
 
-		foreach (AppInfo app in AppInfo.get_all ()) {
-			add_row (app);
-		}
+		message (" Beginning async collection");
+
+    list_apps_async.begin ();
 
 		win.destroy.connect (main_quit);
 		win.set_default_size (750, 500);
 		win.show_all ();
+
+    message ("Window loaded");
 
 		Gtk.main ();
 
 		return 0;
 	}
 
+  /**
+   * List all installed applications
+   */
+  async void list_apps_async ()
+  {
+    List<AppInfo> ai = AppInfo.get_all ();
+    ai.sort ((CompareFunc) compare_app);
+
+    foreach (AppInfo app in ai)
+      yield add_row (app);
+
+    message ("Async collection ended");
+    yield;
+  }
+
+  /**
+   * Comparer function. Compares the displayname of a to b
+   *
+   * @param a
+   * @param b
+   */
+  public static int compare_app (AppInfo a, AppInfo b)
+  {
+    string x, y;
+    x = a.get_display_name ().down ();
+    y = b.get_display_name ().down ();
+
+    return x != y ? x < y ? -1 : 1 : 0;
+  }
+
 	/**
 	 * Append an application to the model
 	 *
 	 * @param app
 	 */
-	void add_row (AppInfo app)
+	async void add_row (AppInfo app)
 	{
-		Gdk.Pixbuf ico = null;	
+		Gdk.Pixbuf ico = null;
 		Icon aicon = null;
 		string icon_name = null;
 
@@ -127,17 +156,17 @@ class Test.Main
 			icon_name = Gtk.Stock.EXECUTE;
 		else
 			icon_name = aicon.to_string ();
-	
+
 		try { ico = theme.load_icon (icon_name, 16, 0); }
-		catch (GLib.Error e) {
+		catch (GLib.Error ea) {
 			try { ico = theme.load_icon (Gtk.Stock.EXECUTE, 16, 0); }
-			catch (GLib.Error e) {}
+			catch (GLib.Error eb) {}
 		}
 
 		TreeIter iter;
 		ls.append (out iter);
-		ls.set (iter, 
-			      TreeViewCols.ICON,     ico, 
+		ls.set (iter,
+			      TreeViewCols.ICON,     ico,
 			      TreeViewCols.APP_NAME, app.get_display_name (),
 			      TreeViewCols.COMMAND,  app.get_commandline (),
 			      -1);
@@ -172,4 +201,3 @@ class Test.Main
 		return col;
 	}
 }
-
