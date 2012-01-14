@@ -17,27 +17,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with URI.js. If not, see <@url{http://www.gnu.org/licenses/@}>.
- *
- * ----------------------------------------------------------------------------
- *
- * Example of usage
- *
- * var uri = new URI("http://mydomain.com/some/path/");
- *
- * console.log(uri.scheme);     //> http
- * console.log(uri.port);       //> 80
- * console.log(uri.host);       //> mydomain.com
- * console.log(uri.path);       //> /some/path/
- * console.log(uri.toString()); //> http://mydomain.com/some/path/
- *
- * // Alter the domain
- * uri.domain = "my.otherdomain.com";
- * console.log(uri.toString()); //> http://my.otherdomain.com/some/path/
- *
- * uri.variables.articleID = 135;
- * uri.variables.action = 'read';
- * console.log(uri.toString());
- * //> http://my.otherdomain.com/some/path/?articleID=135&action=read
  */
 
 /* URI constructor
