@@ -1,7 +1,7 @@
 /* URI class
  * This class is for parsing, creating and manupulating a URI
  *
- * Copyright © 2009, Pontus Östlund <spam@poppa.se>
+ * Copyright © 2009-2012 Pontus Östlund <spam@poppa.se>
  *
  * License GNU GPL version 3
  *
@@ -44,150 +44,161 @@
  *
  * @param uri
  */
-var URI = function(uri)
+var URI = function (uri) 
 {
-  var scheme = null;
-  var host = null;
-  var username = null;
-  var password = null;
-  var port = null;
-  var path = null;
-  var query = null;
-  var fragment = null;
-  var variables = {};
+  var my = this;
+
+  this.scheme = null;
+  this.host = null;
+  this.username = null;
+  this.password = null;
+  this.port = null;
+  this.path = null;
+  this.query = null;
+  this.fragment = null;
+  this.variables = {};
+
   var ports = {
-    ftp: 21,
-    ssh: 22,
+    ftp:    21,
+    ssh:    22,
     telnet: 23,
-    smtp: 25,
-    http: 80,
+    smtp:   25,
+    http:   80,
     https: 443
   };
 
   var enc = encodeURIComponent;
   var dec = decodeURIComponent;
-
-  var re = new RegExp("(?:([-+a-z0-9]+)://" + // Scheme
-		      "((.[^:]*):?(.*)?@)?" + // Userinfo
-		      "(.[^:/]*)"           + // Host
-		      ":?([0-9]{1,6})?)?"   + // Port
-		      "([/.].[^?#]*)?"      + // Path
-		      "([?](.[^#]*))?"      + // Query
-		      "#?(.*)?", "i");        // Fragment
-
-  var parse = function(theUri)
+  
+  /* Turns the querystring `q` into an object
+   *
+   * @param q
+   */
+  this.queryToObject = function (q) 
   {
-    uri = theUri;
-    var m;
-    if (uri && (m = re.exec(uri))) {
-      scheme   = m[1] && m[1].toLowerCase();
-      username = m[3];
-      password = m[4];
-      host     = m[5] && m[5].toLowerCase();
-      port     = m[6] && parseInt(m[6],10);
-      path     = m[7];
-      query    = m[9];
-      fragment = m[10];
+    if (!q || !q.length) return null;
 
-      if (!port && scheme)
-	port = ports[scheme];
+    var res = {};
 
-      if (query && query.length) {
-	var q = query.split('&');
-	for (var i = 0; i < q.length; i++) {
-	  var p = q[i].split('=');
-	  variables[dec(p[0])] = p.length > 1 ? dec(p[1]) : null;
-	}
+    if (q[0] == '?') q = q.substring(1);
+    
+    var p = q.split('&');
+
+    for (var i = 0; i < p.length; i++) {
+      var x = p[i].split('=');
+
+      if (x.length == 1) {
+        res[dec(x[0])] = null;
+        continue;
+      }
+      
+      var k = dec(x[0]);
+      var v = dec(x[1]);
+
+      if (res[k]) {
+        if (typeof res[k] == 'string')
+          res[k] = [ res[k] ];
+        
+        res[k].push(v);
+      }
+      else {
+        res[k] = v;
       }
     }
+
+    return res;
   };
-
-  var isDefaultPort = function()
-  {
-    if (!pub.port) return true;
-    for (var schema in ports) {
-      if (schema == pub.scheme && pub.port != ports[pub.scheme])
-	return false;
-    }
-
-    return true;
-  };
-
-  parse(uri);
-
-  var pub;
-
-  /*****************************************************************************
-   * Return public members and methods */ return pub = {
-  /****************************************************************************/
-
-  /* The uri scheme
-   * @var string
-   */
-  scheme: scheme,
-
-  /* The host
-   * @var string
-   */
-  host: host,
-
-  /* The username
-   * @var string
-   */
-  username: username,
-
-  /* The password
-   * @var string
-   */
-  password: password,
-
-  /* The port
-   * @var int
-   */
-  port: port,
-
-  /* The local path
-   * @var path
-   */
-  path: path,
-
-  /* The fragment
-   * @var string
-   */
-  fragment: fragment,
-
-  /* The query string variables
-   * @var object
-   */
-  variables: variables,
-
-  /* Reparse with uri
+  
+  /* Parse `uri`
    *
    * @param uri
    */
-  parse: function(uri)
-  {
-    parse(uri);
-    this.scheme = scheme;
-    this.host = host;
-    this.username = username;
-    this.password = password;
-    this.port = port;
-    this.path = path;
-    this.fragment = fragment;
-    this.variables = variables;
-  },
+  this.parse = function (uri) 
+  { 
+    var pos = 0, u = uri;
+    // Find scheme
+    if ((pos = u.indexOf('://')) > -1) {
+      this.scheme = u.substring(0, pos);
+      u = u.substring(pos+3);
+    }
+    
+    // Find fragment
+    if ((pos = u.indexOf('#')) > -1) {
+      this.fragment = u.substring(pos+1);
+      u = u.substring(0, pos);
+    }
+    
+    // Find query string
+    if ((pos = u.indexOf('?')) > -1) {
+      this.query = u.substring(pos+1);
+      u = u.substring(0, pos);
+    }
+    
+    // Find path
+    if ((pos = u.indexOf('/')) > -1) {
+      this.path = u.substring(pos);
+      u = u.substring(0, pos);
+    }
+    // if no path and no scheme we're most certainly dealing with a 
+    // relative URI
+    else if (!this.scheme) {
+      this.path = u;
+      u = null;
+    }
 
-  /* Returns the variables as a query string
+    this.variables = this.queryToObject(this.query);
+
+    if (!u || u.length == 0)
+      return;
+    
+    // Find user info
+    if ((pos = u.indexOf('@')) > -1) {
+      var t = u.substring(0, pos);
+
+      if (t.indexOf(':') > -1) {
+        var tt = t.split(':');
+        this.username = tt[0];
+        this.password = tt[1];
+      }
+      else
+        this.username = t;
+
+      u = u.substring(pos+1);
+    }
+    
+    // Find port
+    if ((pos = u.indexOf(':')) > -1) {
+      this.port = parseInt(u.substring(pos+1), 10);
+      u = u.substring(0, pos);
+    }
+
+    // Set the port to default port for the current scheme if no port was
+    // ser explicitly
+    if (!this.port && this.scheme)
+      this.port = ports[this.scheme];
+
+    this.host = u;
+  };
+  
+  /* Returns the querystring part of the object
    */
-  queryString: function()
+  this.queryString = function()
   {
-    //trace(this.variables);
     var tmp = [];
     for (var name in this.variables) {
       var t;
-      if (this.variables[name] != null)
-	t = enc(name) + '=' + enc(this.variables[name]);
+      if (this.variables[name] != null) {
+        // Multiple occurences of variable 
+        if (typeof this.variables[name] !== 'string') {
+          var tt = [];
+          for (var i = 0; i < this.variables[name].length; i++)
+            tt.push(enc(name) + '=' + enc(this.variables[name][i]));
+
+          t = tt.join('&');
+        }
+        else
+          t = enc(name) + '=' + enc(this.variables[name]);
+      }
       else
       	t = enc(name);
 
@@ -195,11 +206,11 @@ var URI = function(uri)
     }
 
     return tmp.length && tmp.join('&') || null;
-  },
-
+  }
+  
   /* Turns this object into a full URI
    */
-  toString: function()
+  this.toString = function()
   {
     var s = "", q = null;
     if (this.scheme)                    s  = this.scheme + "://";
@@ -215,5 +226,18 @@ var URI = function(uri)
 
     return s;
   }
-  /***/}/***/
+
+  var isDefaultPort = function ()
+  {
+    if (!my.port) return true;
+    for (var schema in ports) {
+      if (schema == my.scheme && my.port != ports[my.scheme])
+	return false;
+    }
+
+    return true;
+  };
+
+  if (uri && uri.length > 0)
+    this.parse(uri);
 };
