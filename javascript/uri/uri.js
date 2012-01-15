@@ -25,8 +25,6 @@
  */
 var URI = function (uri) 
 {
-  var my = this;
-
   this.scheme = null;
   this.host = null;
   this.username = null;
@@ -38,17 +36,18 @@ var URI = function (uri)
   this.variables = {};
 
   var ports = {
-    ftp:    21,
-    ssh:    22,
-    telnet: 23,
-    smtp:   25,
-    http:   80,
-    https: 443
+    ftp:     21,
+    ssh:     22,
+    telnet:  23,
+    smtp:    25,
+    http:    80,
+    https:  443,
+    mysql: 3306
   };
 
   var enc = encodeURIComponent;
   var dec = decodeURIComponent;
-  
+
   /* Turns the querystring `q` into an object
    *
    * @param q
@@ -168,7 +167,7 @@ var URI = function (uri)
     for (var name in this.variables) {
       var t, val;
       if ((val = this.variables[name]) !== null) {
-        // Multiple occurences of variable 
+        // Multiple occurences of variable
         if (typeof val !== 'string') {
           var tt = [];
           for (var i = 0; i < val.length; i++) {
@@ -189,10 +188,9 @@ var URI = function (uri)
           if (val.length > 0)
             t += '=' + enc(val);
         }
-      }
 
-      if (t && t.length)
         tmp.push(t);
+      }
     }
 
     return tmp.length && tmp.join('&') || null;
@@ -202,6 +200,13 @@ var URI = function (uri)
    */
   this.toString = function()
   {
+    // If the scheme has been changed from the outside the orginal port
+    // will not reflect the scheme. If the orginal port is a default port
+    // we try to set the new port to the scheme's default port.
+    if (isStandardPort(this.port)) {
+      this.port = ports[this.scheme];
+    }
+    
     var s = "", q = null;
     if (this.scheme)                    s  = this.scheme + "://";
     if (this.username)                  s += this.username;
@@ -209,7 +214,7 @@ var URI = function (uri)
     if (this.password)                  s += this.password;
     if (this.username)                  s += "@";
     if (this.host)                      s += this.host;
-    if (!isDefaultPort())               s += ":" + this.port;
+    if (!this.isDefaultPort())          s += ":" + this.port;
     if (this.path)                      s += this.path;
     if (q = this.queryString())         s += "?" + q;
     if (this.fragment)                  s += "#" + this.fragment;
@@ -217,11 +222,20 @@ var URI = function (uri)
     return s;
   }
 
-  var isDefaultPort = function ()
+  var isStandardPort = function(port) {
+    for (var name in ports) {
+      if (ports[name] == port)
+        return true;
+    }
+    
+    return false;
+  };
+  
+  this.isDefaultPort = function ()
   {
-    if (!my.port) return true;
+    if (!this.port) return true;
     for (var schema in ports) {
-      if (schema == my.scheme && my.port != ports[my.scheme])
+      if (schema == this.scheme && this.port != ports[this.scheme])
 	return false;
     }
 
