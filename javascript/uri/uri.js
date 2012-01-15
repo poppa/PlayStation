@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with URI.js. If not, see <@url{http://www.gnu.org/licenses/@}>.
- */
+ */     
 
 /* URI constructor
  *
@@ -67,7 +67,7 @@ var URI = function (uri)
       var x = p[i].split('=');
 
       if (x.length == 1) {
-        res[dec(x[0])] = null;
+        res[dec(x[0])] = '';
         continue;
       }
       
@@ -158,30 +158,41 @@ var URI = function (uri)
 
     this.host = u;
   };
-  
-  /* Returns the querystring part of the object
+
+  /* Returns the querystring part of the object.
+   * If a variable === null it will be discarted. 
    */
   this.queryString = function()
   {
     var tmp = [];
     for (var name in this.variables) {
-      var t;
-      if (this.variables[name] != null) {
+      var t, val;
+      if ((val = this.variables[name]) !== null) {
         // Multiple occurences of variable 
-        if (typeof this.variables[name] !== 'string') {
+        if (typeof val !== 'string') {
           var tt = [];
-          for (var i = 0; i < this.variables[name].length; i++)
-            tt.push(enc(name) + '=' + enc(this.variables[name][i]));
+          for (var i = 0; i < val.length; i++) {
+            var v = val[i];
+            if (v !== null) {
+              var x = enc(name);
+              if (v.length > 0)
+                x += '=' + enc(v);
+
+              tt.push(x);
+            }
+          }
 
           t = tt.join('&');
         }
-        else
-          t = enc(name) + '=' + enc(this.variables[name]);
+        else {
+          t = enc(name);
+          if (val.length > 0)
+            t += '=' + enc(val);
+        }
       }
-      else
-      	t = enc(name);
 
-      tmp.push(t);
+      if (t && t.length)
+        tmp.push(t);
     }
 
     return tmp.length && tmp.join('&') || null;
