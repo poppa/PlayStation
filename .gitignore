@@ -5,6 +5,7 @@ Vala/*/*/*.c
 *~
 *.stamp
 *.gmo
+*.anjuta*
 po/*.mo
 aclocal.m4
 autom4te.cache
