@@ -6,4 +6,8 @@ test -z "$srcdir" && srcdir=.
 
 PKG_NAME="imgopt"
 
-. gnome-autogen.sh
+if test -f "/usr/bin/gnome-autogen.sh"; then
+  . gnome-autogen.sh
+else
+  echo "No gnome-autogen found"
+fi
