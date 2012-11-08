@@ -4,11 +4,9 @@
  *
  *    # data-tpgn-rows: Number of rows per page. Default is 20.
  *
- *    # data-tpgn-force-rows: If set and "true" the value of the above
- *      attribute will be forced. The standard behavior is that if the number
- *      of rows in the table exceeds data-paginate-rows with only up to 4 the
- *      pagination will be skipped. This attribute forces the pagination even
- *      if the numer of rows only exceeds by one.
+ *    # data-tpgn-bastards: Number of bastrads allowed. Default is 4. This
+ *      means that if each page is 10 rows but there only is 11-14 rows in
+ *      the table the paginations is skipped
  *
  *
  * Example:
@@ -32,14 +30,18 @@ $.fn.tablePaginate = function() // {{{
     ncells = $(rows[0]).find('td').length,
     td = $('<td>').attr('colspan', ncells)
     maxRows = 20,
+    bastards = 4,
     my = this;
-    
+
     if (table.attr('data-tpgn-rows'))
       maxRows = parseInt(table.attr('data-tpgn-rows'), 10);
 
+    if (table.attr('data-tpgn-bastards'))
+      bastards = parseInt(table.attr('data-tpgn-bastards'), 10);
+
     // We pad the number of max rows. If there are more rows in the table than
-    // maxRows, but only by 4 rows we don't bother paginating.
-    if (!table.attr('data-tpgn-force-rows') && nrows < maxRows + 5)
+    // maxRows, but only by n"bastards" rows we don't bother paginating.
+    if (nrows < maxRows + bastards)
       return;
 
     if (tfoot.length === 0) {

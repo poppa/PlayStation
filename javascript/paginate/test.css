@@ -14,13 +14,13 @@ td, th {
   text-align: right;
   }
 tfoot td {  border-top-width: 2px; text-align: left; }
-th { 
+th {
   border: none;
   border-bottom: 1px solid #ccc;;
   color: #096;
   }
 tbody tr:nth-child(2n+0) {
-  background: #f9f9f9;  
+  background: #f9f9f9;
   }
 tbody tr:nth-child(2n+0) td:nth-child(2n+0) {
   background: #efefef;
