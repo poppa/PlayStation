@@ -70,8 +70,8 @@ var URI = function (uri)
         continue;
       }
       
-      var k = dec(x[0]);
-      var v = dec(x[1]);
+      var k = dec(x[0]),
+          v = dec(x[1]);
 
       if (res[k]) {
         if (typeof res[k] == 'string')
@@ -94,6 +94,7 @@ var URI = function (uri)
   this.parse = function (uri) 
   { 
     var pos = 0, u = uri;
+
     // Find scheme
     if ((pos = u.indexOf('://')) > -1) {
       this.scheme = u.substring(0, pos);

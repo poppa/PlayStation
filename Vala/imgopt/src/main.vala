@@ -24,11 +24,11 @@ using Gdk;
 
 class Imgopt.Main
 {
-  static int  arg_width    = 0;
-  static int  arg_height   = 0;
-  static bool arg_recurse  = false;
-  static bool arg_version  = false;
-  public static bool arg_silent   = false;
+  static int  arg_width = 0;
+  static int  arg_height = 0;
+  static bool arg_recurse = false;
+  static bool arg_version = false;
+  public static bool arg_silent = false;
   public static string arg_outdir = null;
 
   public static const OptionEntry[] options = {
