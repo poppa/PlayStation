@@ -4,10 +4,11 @@
 int main(int argc, array(string) argv)
 {
   int nrows = argc > 1 ? (int) argv[1] : 87;
-  array headers = ({ "Date", "One", "Two", "Three", "Four", "Five", "Six" });
+  array(string) headers = ({ "Date", "One", "Two", "Three", "Four", 
+                             "Five", "Six" });
   Calendar.Second date = Calendar.now();
 
-  array out = map(enumerate(nrows),
+  array(array(string)) out = map(enumerate(nrows),
     lambda (int i) {
       return map(enumerate(sizeof(headers)),
         lambda (int j) {
@@ -28,6 +29,9 @@ int main(int argc, array(string) argv)
     ((out[*] * "</td><td>") * "</td></tr>\n    <tr><td>") +
     "</td></tr>",
     "  </tbody>",
+    "  <tfoot>",
+    "    <tr><td colspan='" + sizeof(headers) + "'>A table footer</td></tr>",
+    "  </tfoot>",
     "</table>" }) * "\n");
 
   return 0;

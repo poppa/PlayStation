@@ -1,21 +1,24 @@
 /* jQuery plugin for automatically paginating tables with many rows.
  *
+ * Author: Pontus Östlund, www.poppa.se
+ *
  * Table attributes:
  *
- *    # data-tpgn-rows: Number of rows per page. Default is 20.
+ *   data-tpgn-rows='int'
+ *     Number of rows per page. Default is 20.
  *
- *    # data-tpgn-bastards: Number of bastrads allowed. Default is 4. This
- *      means that if each page is 10 rows but there only is 11-14 rows in
- *      the table the paginations is skipped
- *
+ *   data-tpgn-bastards='int'
+ *     Number of bastrads allowed. Default is 4. This means that if each page
+ *     is 10 rows but there only is 11-14 rows in the table the paginations
+ *     is skipped.
  *
  * Example:
  *
- *    <table class="paginate" data-paginate-rows="10">
- *      ...
- *    </table>
+ *   <table class="paginate" data-tpgn-rows="10">
+ *     ...
+ *   </table>
  *
- *    $('table.paginate').tablePaginate()
+ *   $('table.paginate').tablePaginate()
  */
 $.fn.tablePaginate = function() // {{{
 {
@@ -23,11 +26,11 @@ $.fn.tablePaginate = function() // {{{
   {
     table = $(table);
 
-    var tbody = table.find('tbody'),
-    tfoot = table.find('tfoot'),
-    rows = tbody.length === 0 ? table.find('tr') : tbody.find('tr'),
+    var tbody = table.find('tbody:first'),
+    tfoot = table.find('tfoot:first'),
+    rows = tbody.length === 0 ? table.children('tr') : tbody.children('tr'),
     nrows = rows.length,
-    ncells = $(rows[0]).find('td').length,
+    ncells = $(rows[0]).children('td').length,
     td = $('<td>').attr('colspan', ncells)
     maxRows = 20,
     bastards = 4,
