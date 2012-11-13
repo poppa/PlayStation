@@ -8,8 +8,8 @@ custom data attributes.
 Table attributes
 ----------------
 
-  * data-tpgn-rows='int': Number of table rows per page (default is 20)
-  * data-tpgn-bastards='int': Number of bastards to allow before beginning
+  * `data-tpgn-rows='int'`: Number of table rows per page (default is 20)
+  * `data-tpgn-bastards='int'`: Number of bastards to allow before beginning
     pagination (default is 4).
     
     This means: If data-tpgn-rows=10 and the table contains 14 rows no 
