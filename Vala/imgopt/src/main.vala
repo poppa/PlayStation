@@ -158,16 +158,15 @@ class Imgopt.Main
       foreach (Indexer i in idx)
         i.run ();
 
-      if (!arg_silent)
+      if (!arg_silent) {
         stdout.printf ("\nDouble done!\n");
 
-      if (Image.skipped_images.length () > 0) {
-        if (!arg_silent)
+        if (Image.skipped_images.length () > 0) {
           stdout.printf ("\nThe following images wasn't processed:\n");
 
-        foreach (string s in Image.skipped_images)
-          if (!arg_silent)
+          foreach (string s in Image.skipped_images)
             stdout.printf ("  * %s\n", s);
+        }
       }
     }
     else {
