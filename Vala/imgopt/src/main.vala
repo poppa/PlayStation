@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Author:
- * 	Pontus Östlund <pontus@poppa.se>
+ *  Pontus Östlund <pontus@poppa.se>
  */
 
 using GLib;
@@ -65,27 +65,27 @@ class Imgopt.Main
    */
   public int run (string[] args)
   {
-		try {
-			var opt = new OptionContext ("path [path [...]]]");
-			opt.set_help_enabled (true);
-			opt.add_main_entries (options, null);
-			opt.parse (ref args);
+    try {
+      var opt = new OptionContext ("path [path [...]]]");
+      opt.set_help_enabled (true);
+      opt.add_main_entries (options, null);
+      opt.parse (ref args);
 
       if (arg_version) {
         stdout.printf ("%s version %s\n", Config.PACKAGE, Config.VERSION);
         return 0;
       }
     
-			if (arg_width > 0)  Image.MAX_WIDTH  = arg_width;
-			if (arg_height > 0) Image.MAX_HEIGHT = arg_height;
+      if (arg_width > 0)  Image.MAX_WIDTH  = arg_width;
+      if (arg_height > 0) Image.MAX_HEIGHT = arg_height;
 
-			Dir.recurse = arg_recurse;
-		}
-		catch (GLib.Error e) {
-			stderr.printf ("Argument error: %s\n", e.message);
+      Dir.recurse = arg_recurse;
+    }
+    catch (GLib.Error e) {
+      stderr.printf ("Argument error: %s\n", e.message);
       stderr.printf ("Try -? or --help for options\n");
-			return 1;
-		}
+      return 1;
+    }
 
     if (!arg_silent) {
       stdout.printf (
@@ -139,7 +139,7 @@ class Imgopt.Main
     }
     else {
       for (int i = 1; i < args.length; i++) {
-      	string p = args[i];
+        string p = args[i];
         var o = Indexer.get (p);
         if (o != null) idx.append (o);
       }
@@ -153,13 +153,13 @@ class Imgopt.Main
                   
     if (Image.instances > 0) {
       if (!arg_silent)
-	      stdout.printf ("Starting image processing...\n\n");
+        stdout.printf ("Starting image processing...\n\n");
 
-	    foreach (Indexer i in idx)
-	      i.run ();
+      foreach (Indexer i in idx)
+        i.run ();
 
       if (!arg_silent)
-	      stdout.printf ("\nDouble done!\n");
+        stdout.printf ("\nDouble done!\n");
 
       if (Image.skipped_images.length () > 0) {
         if (!arg_silent)
@@ -169,11 +169,11 @@ class Imgopt.Main
           if (!arg_silent)
             stdout.printf ("  * %s\n", s);
       }
-	  }
-	  else {
+    }
+    else {
       if (!arg_silent)
-	  	  stdout.printf ("\nNothing to process!\n\n");
-	  }
+        stdout.printf ("\nNothing to process!\n\n");
+    }
 
     return 0;
   }
@@ -448,7 +448,7 @@ public class Imgopt.Image : Indexer
     string new_basename = remove_extension (name) + next;
 
     if (Main.arg_outdir == null)
-		  new_basename = remove_extension (name) + "-lowres" + next;
+      new_basename = remove_extension (name) + "-lowres" + next;
   
     string n = base_dir + "/" + new_basename;
     string[] mimes = mime.split ("/");
@@ -460,7 +460,7 @@ public class Imgopt.Image : Indexer
       image.save (n, mimes[1]);
 
       if (!Main.arg_silent)
-			  stdout.printf ("copied to %s\n", new_basename);
+        stdout.printf ("copied to %s\n", new_basename);
 
       return true;
     }
@@ -491,14 +491,14 @@ public class Imgopt.Image : Indexer
    */
   private int[] get_contraints (int org_x, int org_y, int max_x, int max_y)
   {
-		int[] r  = new int[2];
-		double s = Math.fmin ((double)max_x / (double)org_x,
-		                      (double)max_y / (double)org_y);
+    int[] r  = new int[2];
+    double s = Math.fmin ((double)max_x / (double)org_x,
+                          (double)max_y / (double)org_y);
 
-		r[0] = (int)Math.round (s * org_x);
-		r[1] = (int)Math.round (s * org_y);
+    r[0] = (int)Math.round (s * org_x);
+    r[1] = (int)Math.round (s * org_y);
 
-		return r;
+    return r;
   }
 
   /**
@@ -522,10 +522,10 @@ public class Imgopt.Image : Indexer
  */
 public class Imgopt.Dir : Indexer
 {
-	/**
-	 * Do recursive scanning
-	 */
-	public static bool recurse = false;
+  /**
+   * Do recursive scanning
+   */
+  public static bool recurse = false;
   /**
    * Instance counter
    */
@@ -534,10 +534,10 @@ public class Imgopt.Dir : Indexer
    * List of images in the directory
    */
   public unowned GLib.List<Image> images { get; private set; }
-	/**
-	 * List of sub directories
-	 */
-	public unowned GLib.List<Dir> directories { get; private set; }
+  /**
+   * List of sub directories
+   */
+  public unowned GLib.List<Dir> directories { get; private set; }
 
   /**
    * Constructor
@@ -549,7 +549,7 @@ public class Imgopt.Dir : Indexer
     instances++;
     base (path);
     images = new GLib.List<Image> ();
-		directories = new GLib.List<Dir> ();
+    directories = new GLib.List<Dir> ();
 
     try {
       var dirlist = this.path.enumerate_children ("*", 0);
@@ -558,15 +558,15 @@ public class Imgopt.Dir : Indexer
 
       while ((fi = dirlist.next_file ()) != null) {
         string fn = b + "/" + fi.get_name ();
-				if (File.new_for_path (fn).query_file_type (0) == FileType.DIRECTORY) {
-					if (recurse) 
-						directories.append (new Dir (fn));
-				}
-				else {
-	        Gdk.Pixbuf pb;
-	        if (Image.is_allowed (fn, out pb))
-	          images.append (new Image.with_pixbuf (fn, pb));
-				}
+        if (File.new_for_path (fn).query_file_type (0) == FileType.DIRECTORY) {
+          if (recurse) 
+            directories.append (new Dir (fn));
+        }
+        else {
+          Gdk.Pixbuf pb;
+          if (Image.is_allowed (fn, out pb))
+            images.append (new Image.with_pixbuf (fn, pb));
+        }
       }
     }
     catch (GLib.Error e) {
@@ -585,8 +585,8 @@ public class Imgopt.Dir : Indexer
     foreach (Image i in images)
       i.run ();
 
-		foreach (Dir d in directories)
-			d.run ();
+    foreach (Dir d in directories)
+      d.run ();
 
     return true; 
   }
