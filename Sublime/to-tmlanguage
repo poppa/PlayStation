@@ -1,0 +1,176 @@
+#!/usr/bin/env pike
+//! This program converts a property list file (JSON) to a Sublime language
+//! definition file.
+//! 
+//! run like:
+//!
+//! user@computer:~$ to-tmlanguage /path/to/property-lits-file
+//!
+//! The resulting file will be placed in the same directory as the original
+//! file. NOTE! The resulting file will be named like 
+//! [first-part-of-orgiginal-file.tmLanguage]. So if the input file is named
+//! Lang.json the resulting file will be named Lang.tmLanguage.
+//!
+//! * To generate a UUID give the "key" uuid in the property list file the value
+//!   #uuid. The #uuid part will be replaced with a real UUID.
+//!
+//! * $scopeName in the property list file will be expanded to the value of
+//!   the "scopeName" key in the property list.
+//!
+//! { "name" : "Lang",
+//!   "scopeName" : "source.lang",
+//!   "uuid" : "#uuid",
+//"   "test" : "some.stuff.$scopeName" 
+//! }
+//! 
+//! Will result in 
+//!
+//! <dict>
+//!   <key>name</key>
+//!   <string>Lang</string>
+//!   <key>scopeName</key>
+//!   <string>source.lang</string>
+//!   <key>uuid</key>
+//!   <string>f0c5f4ad-3e8a-4add-9ebf-2ce1d5e5262f</string>
+//!   <key>test</key>
+//!   <string>some.stuff.source.lang</string>
+//! </dict>
+
+String.Buffer buffer;
+function add;
+int level = 1;
+
+// Replace < > and with XML entities
+#define rep(X) replace((string)(X), ([ "<" : "&lt;", ">" : "&gt;" ]))
+
+// Add opening tag to buffer
+#define tag1(X) "\n" + ("  " * level) + "<" + X + ">"
+
+// Add closing tag to buffer
+#define tag2(X) "</" + X  + ">"
+
+// Add tag to buffer
+#define tag(TYPE,VAL) add(tag1(TYPE), rep((VAL)), tag2(TYPE))
+
+// Append newline and indentation to buffer
+#define end() ("\n" + ("  " * level))
+
+int main(int argc, array(string) argv)
+{
+  if (argc < 2) {
+    werror("Missing sublime Syntax file as argument\n");
+    return 1;
+  }
+
+  string file = argv[1];
+
+  if (!Stdio.exist(file) || !Stdio.is_file(file)) {
+    werror("Argument is not a file!\n");
+    return 1;
+  }
+
+  buffer = String.Buffer();
+  add = buffer->add;
+
+  add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
+      "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" ",
+      "\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n",
+      "<plist version=\"1.0\">");
+
+  string file_content = Stdio.read_file(file);
+  mixed json = Standards.JSON.decode(file_content);
+
+  if (json->uuid && json->uuid == "#uuid") {
+    json->uuid = (string) Standards.UUID.make_version4();
+    file_content = replace(file_content, "#uuid", json->uuid);
+    Stdio.write_file(file, file_content);
+  }
+
+  encode_xml(json);
+
+  add("\n</plist>");
+
+  string data = buffer->get();
+
+  foreach (json; string key; mixed v) {
+    if (stringp(v))
+      data = replace(data, "$" + key, v);
+  }
+  
+  string ofname, fname, path;
+  path = dirname(file);
+  ofname = fname = basename(file);
+
+  if (search(fname, ".") > -1)
+    fname = (fname/".")[0];
+
+  fname += ".tmLanguage";
+
+  if (fname == ofname) {
+    werror("The input file has the same name as the output file! Please "
+           "rename the input file!\n");
+    return 1;
+  }
+  
+  path = combine_path(path, fname);
+
+  Stdio.write_file(path, data);
+  
+  return 0;
+}
+
+string type_to_string(mixed x)
+{
+  if (intp(x)) return "int";
+  if (arrayp(x)) return "array";
+  if (floatp(x)) return "float";
+  if (stringp(x)) return "string";
+  if (mappingp(x)) return "dict";
+  
+}
+
+mixed encode_xml(mixed in)
+{
+  string type = type_to_string(in);
+
+  switch (type)
+  {
+    case "dict":
+
+      add(tag1(type));
+
+      foreach (in; string key; mixed value) {
+        level++;
+        tag("key", key);
+        encode_xml(value);
+        level--;
+      }
+
+      add(end(), tag2(type));
+
+      break;
+
+    case "array":
+
+      add(tag1(type));
+
+      foreach (in, mixed v) {
+        level++;
+        encode_xml(v);
+        level--;
+      }
+
+      add(end(), tag2(type));
+
+      break;
+
+    case "string":
+    case "float":
+    case "int":
+
+      tag(type, in);
+
+      break;
+  }
+}
+

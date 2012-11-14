@@ -1,0 +1,77 @@
+
+{ "comment" : "This is synatax file for Pike for the programming editor Sublime",
+  "name": "Pike",
+  "scopeName": "source.pike",
+  "fileTypes": ["pike", "pmod"],
+  "foldingStartMarker": "(?x)/\*\*(?!\*)|^(?![^{]*?//|[^{]*?/\*(?!.*?\*/.*?\{)).*?\{\s*($|//|/\*(?!.*?\*/.*\S))",
+  "foldingStopMarker": "(?<!\*)\*\*/|^\s*\}",
+  "keyEquivalent": "^~C",
+  "patterns": [
+
+    { "match": "^(#)\s*\b(if|ifdef|ifndef|elif|else|endif|include|pike|define)\b",
+      "name": "meta.preprocessor.$scopeName",
+      "comment": "Macro definitions",
+      "captures": {
+        "2": {
+          "name": "keyword.control.import.$scopeName"
+        }
+      }
+    },
+
+    { "match": "\b(if|else|while|for|foreach|do|return|continue|break|switch|case|default|goto|catch)\b",
+      "name": "keyword.control.$scopeName",
+      "comment": "Control flow keywords"
+    },
+
+    { "match" : "\b(public|protected|private|static|constant)\b",
+      "name" : "storage.modifier.$scopeName",
+      "comment" : "Modifiers"
+    },
+
+    { "match" : "\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\.?[0-9]*)|(\.[0-9]+))((e|E)(\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\b",
+      "name" : "constant.numeric.$scopeName",
+      "comment" : "Numeric values"
+    },
+
+    { "include" : "#comments" },
+    { "include" : "#builtinTypes" },
+    { "include" : "#doubleQuotedStringLiteral" },
+    { "include" : "#doubleQuotedString" },
+    { "include" : "#singleQuotedString" }
+  ],
+
+  "repository" : {
+
+    "builtinTypes" : {
+      "patterns" : [
+        { "match" : "(?x)\b(float|int|object|mixed|class|function|void|enum|multiset|array|string)\b",
+          "name" : "storage.type.$scopeName"
+        }
+      ]
+    },
+
+    "comments" : {
+      "patterns" : [
+        { "captures" : {
+            "0" : {
+              "name" : "punctuation.definition.comment.$scopeName"
+            }
+          },
+          "name" : "comment.block.$scopeName",
+          "begin" : "/\*",
+          "end" : "\*/n?"
+        },
+
+        { "captures" : {
+            "1" : {
+              "name" : "punctuation.definition.comment.$scopeName"
+            }
+          },
+          "name" : "comment.line.double-slash.$scopeName",
+          "match" : "(//).*$\n?"
+        }
+      ]
+    }
+  },
+  "uuid": "f0c5f4ad-3e8a-4add-9ebf-2ce1d5e5262f"
+}
