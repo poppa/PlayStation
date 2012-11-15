@@ -1,10 +1,9 @@
 #!/usr/bin/env pike
-//! This program converts a property list file (JSON) to a Sublime language
-//! definition file.
+//! This program converts a JSON file to a Sublime language definition file.
 //! 
 //! run like:
 //!
-//! user@computer:~$ to-tmlanguage /path/to/property-lits-file
+//! user@computer:~$ to-tmlanguage /path/to/json-file
 //!
 //! The resulting file will be placed in the same directory as the original
 //! file. NOTE! The resulting file will be named like 
@@ -14,8 +13,8 @@
 //! * To generate a UUID give the "key" uuid in the property list file the value
 //!   #uuid. The #uuid part will be replaced with a real UUID.
 //!
-//! * $scopeName in the property list file will be expanded to the value of
-//!   the "scopeName" key in the property list.
+//! * $scopeName in the JSON file will be expanded to the value of the 
+//!   "scopeName" key.
 //!
 //! { "name" : "Lang",
 //!   "scopeName" : "source.lang",
@@ -36,6 +35,12 @@
 //!   <string>some.stuff.source.lang</string>
 //! </dict>
 
+#ifdef DEVMODE
+// If run with: pike -DDEVMODE to-tmlanguage the-file
+// a copy of Pike.tmLanguage will be put here.
+string config_path = "/home/poppa/.config/sublime-text-2/Packages/User";
+#endif
+
 String.Buffer buffer;
 function add;
 int level = 1;
@@ -55,6 +60,9 @@ int level = 1;
 // Append newline and indentation to buffer
 #define end() ("\n" + ("  " * level))
 
+// Regexp for removing our own comments in the JSON file
+Regexp.PCRE comment_re = Regexp.PCRE("^[ \t]*//-.*$", Regexp.PCRE.OPTION.MULTILINE);
+
 int main(int argc, array(string) argv)
 {
   if (argc < 2) {
@@ -72,13 +80,51 @@ int main(int argc, array(string) argv)
   buffer = String.Buffer();
   add = buffer->add;
 
-  add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
-      "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" ",
-      "\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n",
+  add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+      "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" "
+      "\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
       "<plist version=\"1.0\">");
 
   string file_content = Stdio.read_file(file);
-  mixed json = Standards.JSON.decode(file_content);
+
+  // Remove our special comments  
+  file_content = comment_re->replace(file_content, "");
+
+  array(string) fcarr = file_content/"\n";
+  array(string) newarr = ({});
+  array(string) tmparr = ({});
+
+  // Kindly we can have strings over multiple lines. Lets concatenate those
+  // strings here so the JSON parser won't get upset.
+  foreach (fcarr, string ln) {
+    if (!sizeof(ln))
+      continue;
+
+    if (ln[-1] == '\\') {
+      // Remove the trailing backslash
+      ln = String.trim_all_whites( ln[0..sizeof(ln)-2] );
+      // Remove the trailing quote
+      ln = ln[0..sizeof(ln)-2];
+
+      if (sizeof(tmparr) > 0)
+        // Remove the beginning quote
+        ln = ln[1..];
+      
+      tmparr += ({ ln });
+    }
+    else {
+      if (sizeof(tmparr)) {
+        ln = String.trim_all_whites(ln);
+        tmparr += ({ ln[1..] });
+        newarr += ({ tmparr*"" });
+        tmparr = ({});
+      }
+      else
+        newarr += ({ ln }); 
+    }
+  }
+
+  mixed json = Standards.JSON.decode(newarr*"");
 
   if (json->uuid && json->uuid == "#uuid") {
     json->uuid = (string) Standards.UUID.make_version4();
@@ -116,6 +162,10 @@ int main(int argc, array(string) argv)
 
   Stdio.write_file(path, data);
   
+#ifdef DEVMODE
+  Stdio.write_file(combine_path(config_path, fname), data);
+#endif
+
   return 0;
 }
 
@@ -126,7 +176,8 @@ string type_to_string(mixed x)
   if (floatp(x)) return "float";
   if (stringp(x)) return "string";
   if (mappingp(x)) return "dict";
-  
+
+  error("Unhandled Pike type: %O\n", x); 
 }
 
 mixed encode_xml(mixed in)
