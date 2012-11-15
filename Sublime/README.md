@@ -14,15 +14,12 @@ The file is then normalized before being passed to the JSON parser.
 JSON addition
 ----------------
 
-  * *Comments*: The JSON file can be commented with the prefix `//-`. 
-    NOTE! The comment must be alone on a line.
+  * **Comments**: The JSON file can be commented with the prefix `//-`.<br>
+    NOTE! There can not be anything else but the comment on a line.
 	
-  * *Multiline strings*: Some regexp are seriously long which makes them
+  * **Multiline strings**: Some regexp are seriously long which makes them
     difficult to read. A string can be split by ending the line with a 
     backslash. NOTE! Each line must be quoted though!
-    
-    This means: If data-tpgn-rows=10 and the table contains 14 rows no 
-    pagination will be done.
 
 Example
 ---------------
