@@ -123,8 +123,8 @@
 
     "builtinTypes" : {
       "patterns" : [
-        { "match" : "(?x)\b(float|int|object|mixed|class|function|void|enum|" \
-                    "multiset|array|string)\b",
+        { "match" : "(?x)\b(float|int|object|mixed|class|mapping|function|" \
+                    "void|enum|multiset|array|string)\b",
           "name" : "storage.type.$scopeName"
         }
       ]

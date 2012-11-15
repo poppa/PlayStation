@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
+    <key>scopeName</key>
+    <string>source.pike</string>
+    <key>foldingStopMarker</key>
+    <string>(?&lt;!\*)\n\*\*/|^\s*\}</string>
+    <key>foldingStartMarker</key>
+    <string>(?x)/\*\*(?!\*)|^(?![^{]*?//|[^{]*?/\*(?!.*?\*/.*?\{)).*?\{\s*($|//|/\*(?!.*?\*/.*\S))</string>
     <key>uuid</key>
     <string>f0c5f4ad-3e8a-4add-9ebf-2ce1d5e5262f</string>
     <key>repository</key>
@@ -50,7 +56,7 @@
             <key>name</key>
             <string>storage.type.source.pike</string>
             <key>match</key>
-            <string>(?x)\b(float|int|object|mixed|class|function|void|enum|multiset|array|string)\b</string>
+            <string>(?x)\b(float|int|object|mixed|class|mapping|function|void|enum|multiset|array|string)\b</string>
           </dict>
         </array>
       </dict>
@@ -213,11 +219,5 @@
     <string>Pike</string>
     <key>keyEquivalent</key>
     <string>^~C</string>
-    <key>foldingStopMarker</key>
-    <string>(?&lt;!\*)\n\*\*/|^\s*\}</string>
-    <key>scopeName</key>
-    <string>source.pike</string>
-    <key>foldingStartMarker</key>
-    <string>(?x)/\*\*(?!\*)|^(?![^{]*?//|[^{]*?/\*(?!.*?\*/.*?\{)).*?\{\s*($|//|/\*(?!.*?\*/.*\S))</string>
   </dict>
 </plist>
