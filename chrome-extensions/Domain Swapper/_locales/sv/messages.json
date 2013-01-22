@@ -1,0 +1,56 @@
+{
+  "extname" : {
+    "message" : "Domänbytare",
+    "description" : "Extension name"
+  },
+
+  "extdesc" : {
+    "message" : "Lägger till en kontext-meny som låter dig byta domän med sökvägen och variabler intakt. Användbar för sajter som har flera servrar och/eller domäner",
+    "description" : "Extension description"
+  },
+
+  "settingstitle" : {
+    "message" : "Inställningar för Domänbytare",
+    "description" : "Title of the settings file"
+  },
+
+  "swap_domain" : {
+    "message" : "Byt domän",
+    "description" : "Swap domain"
+  },
+
+  "domains" : {
+    "message" : "Domäner",
+    "description" : "Domains"
+  },
+
+  "remove" : {
+    "message" : "Ta bort",
+    "description" : "Remove"
+  },
+
+  "save" : {
+    "message" : "Spara",
+    "description" : "Save"
+  },
+
+  "settings" : {
+    "message" : "Inställningar",
+    "description" : "Settings"
+  },
+
+  "add_domain" : {
+    "message" : "Lägg till domän",
+    "description" : "Add domain"
+  },
+
+  "always_active" : {
+    "message" : "Alltid aktiv",
+    "description" : "Always active"
+  },
+
+  "always_active_desc" : {
+    "message" : "Om urkryssad kommer inte menyn att vara aktiv på domäner som inte finns ovan",
+    "description" : "Description of always active"
+  }
+}

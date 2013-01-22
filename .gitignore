@@ -33,3 +33,6 @@ Vala/imgopt/src/imgopt
 test
 PlayStation/jsmin/jsmin
 stamp-*
+/pike/java-soap/WebServices/nbproject/private/
+/pike/java-soap/WebServices/build/
+/pike/java-soap/WebServices/dist/

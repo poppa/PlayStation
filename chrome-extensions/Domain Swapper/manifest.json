@@ -1,0 +1,19 @@
+{ "name" : "__MSG_extname__",
+  "manifest_version" : 2,
+  "version" : "1.0",
+  "description" : "__MSG_extdesc__",
+  "permissions" : [
+    "contextMenus",
+    "webNavigation",
+    "tabs"
+  ],
+  "icons" : {
+    "16" : "icon.png"
+  },
+  "background" : {
+    "persistent" : false,
+    "scripts" : [ "utils.js", "swap.js", "uri.js" ]
+  },
+  "options_page" : "settings.html",
+  "default_locale" : "en"
+}

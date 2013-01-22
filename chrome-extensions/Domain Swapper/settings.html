@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <title data-i18n="settingstitle">Domain Swapper settings</title>
+    <link rel="stylesheet" href="settings.css">
+  </head>
+  <body>
+    <h1 data-i18n="settingstitle">Domain Swapper settings</h1>
+    <h2 data-i18n="domains">Domains</h2>
+    <div id="domains">
+      <div id="template" class="domain">
+	<input type="text" value="" name="domain">
+	<a href="#" data-i18n="remove">Remove</a>
+      </div>
+    </div>
+    <div>
+      <a href="#" id="addDomain">+ <span data-i18n="add_domain">Add domain</span></a>
+    </div>
+    <div id="actions">
+      <button id="save" data-i18n="save">Save</button>
+    </div>
+    <!--
+    <hr>
+    <input type="checkbox" id="always-active">
+    <label for="always-active"><strong data-i18n="always_active">Always active</strong><br>
+      <span data-i18n="always_active_desc">If unchecked the menu items
+      will only be active if on one of the domains above.</span></label>
+    -->
+    <script src="utils.js"></script>
+    <script src="settings.js"></script>
+  </body>
+</html>

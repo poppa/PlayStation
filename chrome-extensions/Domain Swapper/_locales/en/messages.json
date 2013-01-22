@@ -1,0 +1,56 @@
+{
+  "extname" : {
+    "message" : "Domain Swapper",
+    "description" : "Extension name"
+  },
+
+  "extdesc" : {
+    "message" : "Adds a context menu to right click where you can choose to swap to a different domain with the path and variables being intact. Useful if you manage a website with many servers and different domains.",
+    "description" : "Extension description"
+  },
+
+  "settingstitle" : {
+    "message" : "Domain Swapper settings",
+    "description" : "Title of the settings file"
+  },
+
+  "swap_domain" : {
+    "message" : "Swap domain",
+    "description" : "Swap domain"
+  },
+
+  "domains" : {
+    "message" : "Domains",
+    "description" : "Domains"
+  },
+
+  "remove" : {
+    "message" : "Remove",
+    "description" : "Remove"
+  },
+
+  "save" : {
+    "message" : "Save",
+    "description" : "Save"
+  },
+
+  "settings" : {
+    "message" : "Settings",
+    "description" : "Settings"
+  },
+
+  "add_domain" : {
+    "message" : "Add domain",
+    "description" : "Add domain"
+  },
+
+  "always_active" : {
+    "message" : "Always active",
+    "description" : "Always active"
+  },
+
+  "always_active_desc" : {
+    "message" : "If unchecked the menu items will only be active if on one of the domains above.",
+    "description" : "Description of always active"
+  }
+}
