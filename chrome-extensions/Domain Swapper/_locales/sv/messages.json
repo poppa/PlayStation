@@ -52,5 +52,19 @@
   "always_active_desc" : {
     "message" : "Om urkryssad kommer inte menyn att vara aktiv på domäner som inte finns ovan",
     "description" : "Description of always active"
+  },
+
+  "clear_all_settings" : {
+    "message" : "Rensa inställningarna",
+    "description" : "Clear all settings"
+  },
+
+  "clear_all_settings_confirm" : {
+    "message" : "Vill du verkligen rensa alla inställningar?",
+    "description" : "Do you really want to clear all settings?"
+  },
+
+  "about" : {
+    "message" : "Det här tillägget är skapat av Pontus Östlund - <a href='http://www.poppa.se'>www.poppa.se</a>"
   }
 }

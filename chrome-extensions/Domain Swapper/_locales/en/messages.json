@@ -52,5 +52,19 @@
   "always_active_desc" : {
     "message" : "If unchecked the menu items will only be active if on one of the domains above.",
     "description" : "Description of always active"
+  },
+
+  "clear_all_settings" : {
+    "message" : "Clear all settings",
+    "description" : "Clear all settings"
+  },
+
+  "clear_all_settings_confirm" : {
+    "message" : "Do you really want to clear all settings?",
+    "description" : "Do you really want to clear all settings?"
+  },
+
+  "about" : {
+    "message" : "This extension is created by Pontus Östlund - <a href='http://www.poppa.se'>www.poppa.se</a>"
   }
 }

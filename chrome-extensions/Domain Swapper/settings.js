@@ -1,10 +1,37 @@
-var t        = document.getElementById('template'),
-d            = document.getElementById('domains'),
-addDomain    = document.getElementById('addDomain'),
-alwaysActive = document.getElementById('always-active'),
-html         = document.getElementsByTagName('html')[0],
-i18n         = html.querySelectorAll('[data-i18n]');
+// Settings functionality for the Domain Swapper Chrome extension
+//
+// Copyright (C) 2013 Pontus Östlund (www.poppa.se)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// The Software shall be used for Good, not Evil.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
+var dom_org_template = document.getElementById('template'),
+template             = null,
+dom_domains          = document.getElementById('domains'),
+dom_alwaysActive     = document.getElementById('always-active'),
+html                 = document.getElementsByTagName('html')[0],
+i18n                 = html.querySelectorAll('[data-i18n]');
+
+// Internationalization. Loop through all elements with the attribute
+// "data-i18n". The attribute value is the translation key. Get that value
+// and replace the nodes content with it.
 for (var i = 0; i < i18n.length; i++) {
   var lnode = i18n[i],
   key = lnode.dataset['i18n'],
@@ -13,28 +40,32 @@ for (var i = 0; i < i18n.length; i++) {
   if (value) lnode.innerHTML = value;
 }
 
-var x = t.cloneNode(true);
-d.removeChild(t);
+// This needs to be after the internationalization
+template = dom_org_template.cloneNode(true);
+dom_domains.removeChild(dom_org_template);
+
+html = null, i18n = null, dom_org_template = null;
 
 var domainHandler = (function () {
-  var dd = config.getDomains(),
-  domains = [];
-
-  console.log(dd);
-
-  for (var i = 0; i < dd.length; i++) {
-    var x = trim(dd[i]);
-    domains.push(x);
-  }
-
-  function trim(s)
-  {
-    return s && s.replace(/^\s*(.*?)\s*$/g, "$1") || "";
-  }
+  var domains = [];
 
   return {
-    save: function() {
-      var c = d.children,
+    init: function() {
+      var dd = config.getDomains();
+
+      for (var i = 0; i < dd.length; i++)
+	domains.push(dd[i]);
+    },
+
+    clearAll: function() {
+      config.clear();
+      domains = [];
+      dom_domains.innerHTML = "";
+      domainHandler.save(true);
+    },
+
+    save: function(noConfig) {
+      var c = dom_domains.children,
       rm = [];
 
       for (var i = 0; i < c.length; i++) {
@@ -50,9 +81,11 @@ var domainHandler = (function () {
       for (var i = 0; i < rm.length; i++)
       	rm[i].parentNode.removeChild(rm[i]);
 
-      config.setDomains(domains);
+      console.log("DS: domainHandler.save()");
 
-      broadcast();
+      if (!noConfig)
+	config.setDomains(domains);
+
       setupDomains();
     },
 
@@ -65,7 +98,7 @@ var domainHandler = (function () {
     },
 
     exists: function(s) {
-      s = trim(s);
+      s = s.trim();
 
       for (var i = 0; i < domains.length; i++)
 	if (domains[i] === s)
@@ -75,19 +108,13 @@ var domainHandler = (function () {
     },
 
     add: function(s) {
-      s = trim(s);
+      s = s.trim();
 
-      if (s.length === 0) {
-      	console.log("Zero length domain!");
+      if (s.length === 0)
       	return false;
-      }
 
-      if (domainHandler.exists(s)) {
-      	console.log("Domain '" + s + "' exists. Skipping!");
+      if (domainHandler.exists(s))
       	return false;
-      }
-
-      console.log("Adding '" + s + "' to domains");
 
       domains.push(s);
 
@@ -96,10 +123,10 @@ var domainHandler = (function () {
 
     remove: function(s)
     {
-      var n = [];
-      s = trim(s);
+      console.log("DS: domainHandler.remove('" + s + "')");
 
-      console.log("Remove domain: " + s);
+      var n = [];
+      s = s.trim();
 
       for (var i = 0; i < domains.length; i++) {
       	if (s === domains[i])
@@ -110,25 +137,15 @@ var domainHandler = (function () {
 
       domains = n;
       config.setDomains(domains);
-      broadcast();
     }
   };
 })();
 
-function broadcast()
-{
-  console.log("Broadcast change!");
-
-  chrome.extension.sendMessage({
-    request: 'updateContextMenu'
-  });
-}
-
 function getTemplate()
 {
-  var tx = x.cloneNode(true);
-  tx.removeAttribute("id");
-  return tx;
+  var t = template.cloneNode(true);
+  t.removeAttribute("id");
+  return t;
 }
 
 function onRemoveDomainClick()
@@ -142,46 +159,55 @@ function onRemoveDomainClick()
 
 function setupDomains()
 {
-  console.log(config.getDomains());
-  d.innerHTML = "";
+  dom_domains.innerHTML = "";
 
   var dd = domainHandler.domains();
 
   for (var i = 0; i < dd.length; i++) {
     var tx = getTemplate(),
     inp = tx.querySelector('input'),
-    ah = tx.querySelector('a');
+    ah = tx.querySelector('button');
 
     ah.addEventListener('click', onRemoveDomainClick);
     inp.value = dd[i];
     inp.disabled = true;
-    d.appendChild(tx);
+    dom_domains.appendChild(tx);
   }
+
+  setAlwaysActive();
 }
+
+function setAlwaysActive()
+{
+  dom_alwaysActive.checked = config.isAlwaysActive();
+}
+
+dom_alwaysActive.addEventListener('change', function(e) {
+  console.log("DS: alwaysActive.change(" + this.checked + ")");
+  config.set('always-active', this.checked);
+});
 
 document.getElementById('save').addEventListener('click', function(e) {
   domainHandler.save();
   return false;
 });
 
-if (alwaysActive) {
-  alwaysActive.checked = config.get('always-active') === false ? false : true;
-  
-  alwaysActive.addEventListener('change', function(e)
-  {
-    config.set('always-active', this.checked);
-  });
-}
+document.getElementById('clear').addEventListener('click', function(e) {
+  if (confirm(__('clear_all_settings_confirm')))
+    domainHandler.clearAll();
+});
 
-addDomain.addEventListener('click', function(e) {
+document.getElementById('addDomain').addEventListener('click', function(e) {
   var y = getTemplate();
-  d.appendChild(y);
+  dom_domains.appendChild(y);
 
-  var a = y.querySelector('a');
-  a.onclick = onRemoveDomainClick;
+  var a = y.querySelector('button');
+  a.addEventListener('click', onRemoveDomainClick);
 
   return false;
 });
 
-setupDomains();
-
+config.onReady(function() {
+  domainHandler.init();
+  setupDomains();
+});
