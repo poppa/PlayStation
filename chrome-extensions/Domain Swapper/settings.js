@@ -22,10 +22,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-var dom_org_template = document.getElementById('template'),
+var dom_org_template = getElement('template'),
 template             = null,
-dom_domains          = document.getElementById('domains'),
-dom_alwaysActive     = document.getElementById('always-active'),
+dom_domains          = getElement('domains'),
 html                 = document.getElementsByTagName('html')[0],
 i18n                 = html.querySelectorAll('[data-i18n]');
 
@@ -36,6 +35,19 @@ for (var i = 0; i < i18n.length; i++) {
   var lnode = i18n[i],
   key = lnode.dataset['i18n'],
   value = __(key);
+
+  // Replace macros in the form of {manifest_key} with the value of the 
+  // corresponding key in the manifest object.
+  var m = value.match(/\{.*?\}/g);
+
+  if (m) {
+    for (var j = 0; j < m.length; j++) {
+      var mj = m[j],
+      k = mj.substring(1, mj.length-1),
+      c = config.manifest[k];
+      value = value.replace(mj, c);
+    }
+  }
 
   if (value) lnode.innerHTML = value;
 }
@@ -179,25 +191,24 @@ function setupDomains()
 
 function setAlwaysActive()
 {
-  dom_alwaysActive.checked = config.isAlwaysActive();
+  getElement('always-active').checked = config.isAlwaysActive();
 }
 
-dom_alwaysActive.addEventListener('change', function(e) {
-  console.log("DS: alwaysActive.change(" + this.checked + ")");
+getElement('always-active').addEventListener('change', function(e) {
   config.set('always-active', this.checked);
 });
 
-document.getElementById('save').addEventListener('click', function(e) {
+getElement('save').addEventListener('click', function(e) {
   domainHandler.save();
   return false;
 });
 
-document.getElementById('clear').addEventListener('click', function(e) {
+getElement('clear').addEventListener('click', function(e) {
   if (confirm(__('clear_all_settings_confirm')))
     domainHandler.clearAll();
 });
 
-document.getElementById('addDomain').addEventListener('click', function(e) {
+getElement('addDomain').addEventListener('click', function(e) {
   var y = getTemplate();
   dom_domains.appendChild(y);
 

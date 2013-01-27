@@ -1,6 +1,6 @@
 { "name" : "__MSG_extname__",
   "manifest_version" : 2,
-  "version" : "1.0.3",
+  "version" : "1.0.4",
   "description" : "__MSG_extdesc__",
   "permissions" : [
     "contextMenus",

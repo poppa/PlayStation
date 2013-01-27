@@ -22,15 +22,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-function trace()
-{
-  for (var i = 0; i < arguments.length; i++)
-    console.log(arguments[i]);
-}
-
 String.prototype.trim = function () {
   return this.replace(/^\s*(.*?)\s*$/g, "$1") || "";
 };
+
+function getElement(id)
+{
+  return document.getElementById(id);
+}
 
 function __(key)
 {
@@ -41,7 +40,8 @@ var config = new (function()
 {
   var conf = { "swapdomains" : {}},
   onReadyCallback,
-  isReady = false;
+  isReady = false,
+  manifest = chrome.runtime.getManifest();
 
   chrome.storage.onChanged.addListener(function (obj, area) {
     console.log("DS: storage.changed(" + JSON.stringify(obj) + ")");
@@ -70,6 +70,8 @@ var config = new (function()
     chrome.storage.sync.set(conf);
   }
 
+  this.manifest = manifest;
+  
   this.isReady = function () {
     return isReady;
   };
@@ -129,7 +131,6 @@ var config = new (function()
 
   this.setDomains = function(val)
   {
-    var c = getc();
     conf.swapdomains.domains = val;
     save();
   };

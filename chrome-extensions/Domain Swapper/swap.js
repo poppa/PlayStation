@@ -50,7 +50,7 @@ chrome.webNavigation.onCommitted.addListener(function (e) {
   console.log("DS: webNavigation.onCommitted()");
   // Only update menu if URL i changed in the active tab
   chrome.tabs.get(e.tabId, function (tab) {
-    if (tab.active)
+    if (tab && tab.active)
       updateMenu();
   });
 });
@@ -93,7 +93,10 @@ function updateMenu()
 {
   console.log("DS: updateMenu()");
 
-  chrome.tabs.getSelected(null, function (tab) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tab) {
+    // This happens when closing Chrome for instance.
+    if (!(tab = tab[0])) return;
+
     var turl = new URI(tab.url),
     domains = config.getDomains(),
     disable_all = !config.isMyDomain(turl.host) && !config.isAlwaysActive();

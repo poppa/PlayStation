@@ -65,6 +65,6 @@
   },
 
   "about" : {
-    "message" : "This extension is created by Pontus Östlund - <a href='http://www.poppa.se'>www.poppa.se</a>"
+    "message" : "The extension <strong>{name}</strong> is created by Pontus Östlund - <a href='http://www.poppa.se'>www.poppa.se</a><br>Version {version}"
   }
 }

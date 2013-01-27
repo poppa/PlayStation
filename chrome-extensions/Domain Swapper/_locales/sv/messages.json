@@ -65,6 +65,6 @@
   },
 
   "about" : {
-    "message" : "Det här tillägget är skapat av Pontus Östlund - <a href='http://www.poppa.se'>www.poppa.se</a>"
+    "message" : "Tillägget <strong>{name}</strong> är skapat av Pontus Östlund - <a href='http://www.poppa.se'>www.poppa.se</a><br/>Version {version}"
   }
 }
