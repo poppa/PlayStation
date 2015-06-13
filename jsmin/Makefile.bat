@@ -1,1 +1,0 @@
-valac -D WINNT --pkg gio-2.0 -o jsmin jsmin.vala

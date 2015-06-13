@@ -1,7 +1,24 @@
-$(document).ready(function()
-{
+
+(function() {
+var t;
+var puts = function() {
+  var m = arguments[0];
+  if (arguments.length > 1) {
+    for (var i = 1; i < arguments.length; i++) {
+      var re = new RegExp("\\\{" + (i-1) + "\\\}", "g");
+      m = m.replace(re, arguments[i]);
+      console.log(t);
+    }
+  }
+
+  t.append(m);
+};
+$(document).ready(function() {
+
+  t = $('#console pre');
+
   // <capture>
-  
+
   var uri = new URI('http://poppa.se');
   uri.path = '/blog/';
   uri.variables.offset = 10;
@@ -25,3 +42,4 @@ $(document).ready(function()
 
   // </capture>
 });
+}());

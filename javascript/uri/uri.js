@@ -1,11 +1,12 @@
-/* URI class
+/*!
+ * URI class
  * This class is for parsing, creating and manupulating a URI
  *
- * Copyright © 2009-2012 Pontus Östlund <spam@poppa.se>
+ * Copyright © 2009-2015 Pontus Östlund <https://profiles.google.com/poppanator>
  *
  * License GNU GPL version 3
- *
- * URI.js is free software: you can redistribute it and/or modify
+ */
+/* URI.js is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,14 +18,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with URI.js. If not, see <@url{http://www.gnu.org/licenses/@}>.
- */     
+ */
 
+(function() {
+'use strict';
 /* URI constructor
  *
  * @param uri
  */
-var URI = function (uri) 
-{
+window.URI = function(uri) {
   this.scheme = null;
   this.host = null;
   this.username = null;
@@ -52,31 +54,30 @@ var URI = function (uri)
    *
    * @param q
    */
-  this.queryToObject = function (q) 
-  {
+  this.queryToObject = function(q) {
     if (!q || !q.length) return null;
 
-    var res = {};
+    var res = {}, p, i, x, k, v;
 
-    if (q[0] == '?') q = q.substring(1);
-    
-    var p = q.split('&');
+    if (q[0] === '?') q = q.substring(1);
 
-    for (var i = 0; i < p.length; i++) {
-      var x = p[i].split('=');
+    p = q.split('&');
 
-      if (x.length == 1) {
+    for (i = 0; i < p.length; i++) {
+      x = p[i].split('=');
+
+      if (x.length === 1) {
         res[dec(x[0])] = '';
         continue;
       }
-      
-      var k = dec(x[0]),
-          v = dec(x[1]);
+
+      k = dec(x[0]);
+      v = dec(x[1]);
 
       if (res[k]) {
-        if (typeof res[k] == 'string')
+        if (typeof res[k] === 'string')
           res[k] = [ res[k] ];
-        
+
         res[k].push(v);
       }
       else {
@@ -86,56 +87,54 @@ var URI = function (uri)
 
     return res;
   };
-  
+
   /* Parse `uri`
    *
    * @param uri
    */
-  this.parse = function (uri) 
-  { 
-    var pos = 0, u = uri;
-
+  this.parse = function (uri) {
+    var pos = 0, u = uri, t, tt;
     // Find scheme
     if ((pos = u.indexOf('://')) > -1) {
       this.scheme = u.substring(0, pos);
       u = u.substring(pos+3);
     }
-    
+
     // Find fragment
     if ((pos = u.indexOf('#')) > -1) {
       this.fragment = u.substring(pos+1);
       u = u.substring(0, pos);
     }
-    
+
     // Find query string
     if ((pos = u.indexOf('?')) > -1) {
       this.query = u.substring(pos+1);
       u = u.substring(0, pos);
     }
-    
+
     // Find path
     if ((pos = u.indexOf('/')) > -1) {
       this.path = u.substring(pos);
       u = u.substring(0, pos);
     }
-    // if no path and no scheme we're most certainly dealing with a 
+    // if no path and no scheme we're most certainly dealing with a
     // relative URI
     else if (!this.scheme) {
       this.path = u;
       u = null;
     }
 
-    this.variables = this.queryToObject(this.query);
+    this.variables = this.queryToObject(this.query) || {};
 
-    if (!u || u.length == 0)
+    if (!u || u.length === 0)
       return;
-    
+
     // Find user info
     if ((pos = u.indexOf('@')) > -1) {
-      var t = u.substring(0, pos);
+      t = u.substring(0, pos);
 
       if (t.indexOf(':') > -1) {
-        var tt = t.split(':');
+        tt = t.split(':');
         this.username = tt[0];
         this.password = tt[1];
       }
@@ -144,7 +143,7 @@ var URI = function (uri)
 
       u = u.substring(pos+1);
     }
-    
+
     // Find port
     if ((pos = u.indexOf(':')) > -1) {
       this.port = parseInt(u.substring(pos+1), 10);
@@ -160,21 +159,20 @@ var URI = function (uri)
   };
 
   /* Returns the querystring part of the object.
-   * If a variable === null it will be discarted. 
+   * If a variable === null it will be discarted.
    */
-  this.queryString = function()
-  {
-    var tmp = [];
+  this.queryString = function() {
+    var tmp = [], t, val, tt, v, x, i;
+
     for (var name in this.variables) {
-      var t, val;
       if ((val = this.variables[name]) !== null) {
         // Multiple occurences of variable
         if (typeof val !== 'string') {
-          var tt = [];
-          for (var i = 0; i < val.length; i++) {
-            var v = val[i];
+          tt = [];
+          for (i = 0; i < val.length; i++) {
+            v = val[i];
             if (v !== null) {
-              var x = enc(name);
+              x = enc(name);
               if (v.length > 0)
                 x += '=' + enc(v);
 
@@ -196,18 +194,17 @@ var URI = function (uri)
 
     return tmp.length && tmp.join('&') || null;
   }
-  
+
   /* Turns this object into a full URI
    */
-  this.toString = function()
-  {
+  this.toString = function() {
     // If the scheme has been changed from the outside the orginal port
     // will not reflect the scheme. If the orginal port is a default port
     // we try to set the new port to the scheme's default port.
     if (isStandardPort(this.port)) {
       this.port = ports[this.scheme];
     }
-    
+
     var s = "", q = null;
     if (this.scheme)                    s  = this.scheme + "://";
     if (this.username)                  s += this.username;
@@ -225,19 +222,18 @@ var URI = function (uri)
 
   var isStandardPort = function(port) {
     for (var name in ports) {
-      if (ports[name] == port)
+      if (ports[name] === port)
         return true;
     }
-    
+
     return false;
   };
-  
-  this.isDefaultPort = function ()
-  {
+
+  this.isDefaultPort = function () {
     if (!this.port) return true;
     for (var schema in ports) {
-      if (schema == this.scheme && this.port != ports[this.scheme])
-	return false;
+      if (schema === this.scheme && this.port !== ports[this.scheme])
+        return false;
     }
 
     return true;
@@ -246,3 +242,4 @@ var URI = function (uri)
   if (uri && uri.length > 0)
     this.parse(uri);
 };
+}());
